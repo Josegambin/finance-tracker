@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import finance_tracker_api.dto.auth.LoginRequest;
+import finance_tracker_api.dto.auth.LoginResponse;
 import finance_tracker_api.dto.auth.RegisterRequest;
 import finance_tracker_api.dto.auth.UserResponse;
 import finance_tracker_api.service.AuthService;
@@ -24,5 +26,12 @@ public class AuthController {
             @Valid @RequestBody RegisterRequest request
     ) {
         return authService.register(request);
+    }
+
+    @PostMapping("/login")
+    public LoginResponse login(
+            @Valid @RequestBody LoginRequest request
+    ) {
+        return authService.login(request);
     }
 }

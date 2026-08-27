@@ -1,51 +1,64 @@
-import { useEffect, useState } from 'react';
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes
+} from 'react-router-dom';
 
-interface HealthResponse {
-  status: string;
-  application: string;
-}
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
 
-  const [health, setHealth] = useState<HealthResponse | null>(null);
-
-  useEffect(() => {
-
-    fetch('http://localhost:8080/api/health')
-      .then(response => response.json())
-      .then(data => {
-        setHealth(data);
-      })
-      .catch(error => {
-        console.error('Error connecting with API:', error);
-      });
-
-  }, []);
-
   return (
-    <main>
+    <BrowserRouter>
 
-      <h1>Finance Tracker</h1>
+      <Routes>
 
-      {!health && (
-        <p>Connecting with backend...</p>
-      )}
+        <Route
+          path="/"
+          element={
+            <Navigate
+              to="/login"
+              replace
+            />
+          }
+        />
 
-      {health && (
-        <section>
+        <Route
+          path="/login"
+          element={<Login />}
+        />
 
-          <h2>Backend connected</h2>
+        <Route
+          path="/register"
+          element={<Register />}
+        />
 
-          <p>Status: {health.status}</p>
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
 
-          <p>
-            Application: {health.application}
-          </p>
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to="/login"
+              replace
+            />
+          }
+        />
 
-        </section>
-      )}
+      </Routes>
 
-    </main>
+    </BrowserRouter>
   );
 }
 
