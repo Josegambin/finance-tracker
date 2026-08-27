@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: finance-tracker-api
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/finance_tracker
+    username: finance_user
+    password: finance_password
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8080
