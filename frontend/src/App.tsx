@@ -12,6 +12,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import CategoriesPage from './pages/CategoriesPage';
 import type { Category } from './types/category';
 import { useState } from 'react';
+import TransactionsPage from './pages/TransationPage';
 
 function App() {
 
@@ -56,6 +57,15 @@ function App() {
           element={
             <ProtectedRoute>
               <CategoriesPage  />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/transactions"
+          element={
+            <ProtectedRoute>
+              <TransactionsPage />
             </ProtectedRoute>
           }
         />
