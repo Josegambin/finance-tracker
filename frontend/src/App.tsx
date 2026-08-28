@@ -9,9 +9,14 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import CategoriesPage from './pages/CategoriesPage';
+import type { Category } from './types/category';
+import { useState } from 'react';
 
 function App() {
 
+  const [categories, setCategories] = useState<Category[]>([]);
+  const handleDelete = async (id: number) => { /* ... */ };
   return (
     <BrowserRouter>
 
@@ -47,6 +52,15 @@ function App() {
         />
 
         <Route
+          path="/categories"
+          element={
+            <ProtectedRoute>
+              <CategoriesPage  />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="*"
           element={
             <Navigate
@@ -55,7 +69,7 @@ function App() {
             />
           }
         />
-
+    
       </Routes>
 
     </BrowserRouter>
