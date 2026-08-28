@@ -1,65 +1,185 @@
-import { useNavigate } from 'react-router-dom';
+import {
+  useEffect,
+  useState
+} from 'react';
 
-import { useAuth } from '../context/AuthContext';
+import {
+  getDashboard
+} from '../api/dashboardApi';
+
 import Navbar from '../components/Navbar';
+
+import DashboardCard
+  from '../components/DashboardCard';
+
+import RecentTransactions
+  from '../components/RecentTransaction';
+
+import type {
+  Dashboard
+} from '../types/dashboard';
 
 export default function Dashboard() {
 
-  const { logout } = useAuth();
+  const [dashboard, setDashboard] =
+    useState<Dashboard | null>(null);
 
-  const navigate = useNavigate();
+  const [loading, setLoading] =
+    useState(true);
 
-  const handleLogout = () => {
+  const [error, setError] =
+    useState<string | null>(null);
 
-    logout();
+  const loadDashboard = async () => {
 
-    navigate('/login');
+    try {
+
+      setLoading(true);
+
+      const data =
+        await getDashboard();
+
+      setDashboard(data);
+
+    } catch (error) {
+
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Unexpected error'
+      );
+
+    } finally {
+
+      setLoading(false);
+    }
   };
 
-   return (
+  useEffect(() => {
+
+    loadDashboard();
+
+  }, []);
+
+  if (loading) {
+
+    return (
+      <>
+        <Navbar />
+
+        <main className="page-container">
+
+          <p>
+            Loading dashboard...
+          </p>
+
+        </main>
+      </>
+    );
+  }
+
+  if (error) {
+
+    return (
+      <>
+        <Navbar />
+
+        <main className="page-container">
+
+          <div className="error-message">
+            {error}
+          </div>
+
+        </main>
+      </>
+    );
+  }
+
+  if (!dashboard) {
+
+    return null;
+  }
+
+  return (
 
     <>
       <Navbar />
 
       <main className="page-container">
 
-        <p className="eyebrow">
-          OVERVIEW
-        </p>
-
-        <h1>
-          Dashboard
-        </h1>
-
-        <p className="page-description">
-          Welcome back. Here you will see
-          a summary of your finances.
-        </p>
-
-        <section className="dashboard-placeholder">
+        <div className="page-header">
 
           <div>
 
-            <span>
-              📊
-            </span>
+            <p className="eyebrow">
+              FINANCE OVERVIEW
+            </p>
 
-            <h2>
-              Your financial dashboard
-              is coming soon
-            </h2>
+            <h1>
+              Dashboard
+            </h1>
 
-            <p>
-              First, create some categories.
+            <p className="page-description">
+              Here's an overview of your finances.
             </p>
 
           </div>
+
+        </div>
+
+        <section className="dashboard-grid">
+
+          <DashboardCard
+            title="Total balance"
+            value={dashboard.balance}
+            icon="💰"
+            type="balance"
+          />
+
+          <DashboardCard
+            title="Total income"
+            value={dashboard.totalIncome}
+            icon="↗"
+            type="income"
+          />
+
+          <DashboardCard
+            title="Total expenses"
+            value={dashboard.totalExpenses}
+            icon="↘"
+            type="expense"
+          />
+
+        </section>
+
+        <section className="content-card">
+
+          <div className="section-header">
+
+            <div>
+
+              <h2>
+                Recent transactions
+              </h2>
+
+              <p>
+                Your latest financial activity.
+              </p>
+
+            </div>
+
+          </div>
+
+          <RecentTransactions
+            transactions={
+              dashboard.recentTransactions
+            }
+          />
 
         </section>
 
       </main>
 
     </>
-
   );
 }
