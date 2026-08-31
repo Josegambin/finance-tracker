@@ -442,6 +442,7 @@ main form input {
 
 .transaction-filters {
   display: flex;
+  flex-wrap: wrap;
   gap: 20px;
   margin-bottom: 24px;
   padding-bottom: 20px;
@@ -461,11 +462,12 @@ main form input {
 
 .filter-group input,
 .filter-group select {
-  min-width: 220px;
+  min-width: 200px;
   padding: 10px 12px;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   font-size: 14px;
+  background: white;
 }
 
 .filter-group input:focus,

@@ -54,6 +54,12 @@ export default function TransactionsPage() {
       TransactionType | 'ALL'
     >('ALL');
 
+  const [monthFilter, setMonthFilter] =
+    useState('ALL');
+
+  const [categoryFilter, setCategoryFilter] =
+    useState<number | 'ALL'>('ALL');
+
   const loadData = async () => {
 
     try {
@@ -155,6 +161,16 @@ export default function TransactionsPage() {
     }
   };
 
+  const availableMonths =
+  Array.from(
+    new Set(
+      transactions.map(
+        transaction =>
+          transaction.date.substring(0, 7)
+      )
+    )
+  ).sort().reverse();
+
   const filteredTransactions =
   transactions.filter(
     transaction => {
@@ -166,14 +182,29 @@ export default function TransactionsPage() {
             search.toLowerCase()
           );
 
+
       const matchesType =
         typeFilter === 'ALL' ||
         transaction.type === typeFilter;
 
+
+      const matchesCategory =
+        categoryFilter === 'ALL' ||
+        transaction.categoryId === categoryFilter;
+
+
+      const matchesMonth =
+        monthFilter === 'ALL' ||
+        transaction.date.substring(0, 7) === monthFilter;
+
+
       return (
         matchesSearch &&
-        matchesType
+        matchesType &&
+        matchesCategory &&
+        matchesMonth
       );
+
     }
   );
 
@@ -249,12 +280,19 @@ export default function TransactionsPage() {
 
         <section className="content-card">
 
-        <TransactionFilters
+       <TransactionFilters
           search={search}
           type={typeFilter}
+          categoryId={categoryFilter}
+          month={monthFilter}
+          categories={categories}
+          months={availableMonths}
           onSearchChange={setSearch}
           onTypeChange={setTypeFilter}
+          onCategoryChange={setCategoryFilter}
+          onMonthChange={setMonthFilter}
         />
+
           <div className="section-header">
 
             <div>
