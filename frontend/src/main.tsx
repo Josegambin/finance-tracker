@@ -6,6 +6,7 @@ import './styles/app.css';
 import './styles/categories.css';
 import './styles/transaction.css';
 import './styles/dashboard.css';
+import './styles/navbar.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -13,4 +14,4 @@ createRoot(document.getElementById('root')!).render(
       <App />
     </AuthProvider>
   </StrictMode>
-);
+);6

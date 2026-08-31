@@ -13,6 +13,7 @@ import CategoriesPage from './pages/CategoriesPage';
 import type { Category } from './types/category';
 import { useState } from 'react';
 import TransactionsPage from './pages/TransationPage';
+import BudgetsPage from './pages/BudgetsPage';
 
 function App() {
 
@@ -68,6 +69,11 @@ function App() {
               <TransactionsPage />
             </ProtectedRoute>
           }
+        />
+
+        <Route
+          path="/budgets"
+          element={<BudgetsPage />}
         />
 
         <Route

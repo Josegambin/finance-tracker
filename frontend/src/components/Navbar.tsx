@@ -1,35 +1,16 @@
-import {
-  Link,
-  useNavigate
-} from 'react-router-dom';
-
-import { useAuth }
-  from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 export default function Navbar() {
 
-  const { logout } = useAuth();
-
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-
-    logout();
-
-    navigate('/login');
-  };
-
   return (
-
-    <header className="navbar">
+    <nav className="navbar">
 
       <div className="navbar-container">
 
         <Link
           to="/dashboard"
-          className="brand"
+          className="navbar-brand"
         >
-
           <span className="brand-icon">
             €
           </span>
@@ -37,10 +18,9 @@ export default function Navbar() {
           <span>
             Finance Tracker
           </span>
-
         </Link>
 
-        <nav className="nav-links">
+        <div className="navbar-links">
 
           <Link to="/dashboard">
             Dashboard
@@ -54,18 +34,29 @@ export default function Navbar() {
             Categories
           </Link>
 
-        </nav>
+          <Link to="/budgets">
+            Budgets
+          </Link>
+
+        </div>
 
         <button
-          className="button button-secondary"
-          onClick={handleLogout}
+          className="navbar-logout"
+          onClick={() => {
+
+            localStorage.removeItem(
+              'finance_tracker_token'
+            );
+
+            window.location.href = '/login';
+
+          }}
         >
           Logout
         </button>
 
       </div>
 
-    </header>
-
+    </nav>
   );
 }
