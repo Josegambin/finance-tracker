@@ -51,6 +51,9 @@ main form input {
   color: #f8fafc;
 }
 
+
+
+
 .budget-form {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr auto;
@@ -265,3 +268,149 @@ main form input {
   }
 
 }
+
+.budget-filter {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  margin-bottom: 20px;
+}
+
+.budget-filter label {
+  color: #94a3b8;
+
+  font-size: 14px;
+
+  font-weight: 500;
+}
+
+.budget-filter select {
+  min-width: 160px;
+
+  padding: 10px 12px;
+
+  border-radius: 9px;
+
+  border: 1px solid #475569;
+
+  background: #0f172a;
+
+  color: #f8fafc;
+
+  cursor: pointer;
+}
+
+.budget-filter select:focus {
+  outline: none;
+
+  border-color: #60a5fa;
+}
+
+.budget-summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 16px;
+
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  padding: 20px;
+
+  border-radius: 14px;
+
+  background: #1e293b;
+
+  border: 1px solid #334155;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.summary-card span {
+  color: #94a3b8;
+
+  font-size: 13px;
+}
+
+.summary-card strong {
+  color: #f8fafc;
+
+  font-size: 24px;
+}
+
+.summary-card strong.negative {
+  color: #ef4444;
+}
+
+@media (max-width: 700px) {
+
+  .budget-summary {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+.dashboard-chart-card {
+  margin-top: 20px;
+
+  padding: 24px;
+
+  border-radius: 14px;
+
+  background: #1e293b;
+
+  border: 1px solid #334155;
+}
+
+.chart-header h2 {
+  margin: 0;
+
+  color: #f8fafc;
+
+  font-size: 18px;
+}
+
+.chart-header p {
+  margin-top: 6px;
+
+  color: #94a3b8;
+
+  font-size: 13px;
+}
+
+.chart-container {
+  width: 100%;
+
+  margin-top: 10px;
+}
+
+.chart-empty {
+  min-height: 250px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: #64748b;
+}
+
+.chart-empty span {
+  font-size: 40px;
+
+  margin-bottom: 10px;
+}
+

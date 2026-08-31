@@ -1,3 +1,6 @@
+import { useState } from "react";
+import type { ExpenseByCategory } from "../api/dashboardApi";
+
 interface DashboardCardProps {
   title: string;
   value: number;
@@ -20,6 +23,9 @@ export default function DashboardCard({
         currency: 'EUR'
       }
     ).format(value);
+
+    const [expensesByCategory, setExpensesByCategory] =
+      useState<ExpenseByCategory[]>([]);
 
   return (
     <div

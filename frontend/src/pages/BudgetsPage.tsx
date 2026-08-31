@@ -43,6 +43,61 @@ export default function BudgetsPage() {
 
   const [error, setError] =
     useState<string | null>(null);
+  const currentMonth =
+    new Date()
+      .toISOString()
+      .slice(0, 7);
+
+  const [selectedMonth, setSelectedMonth] =
+    useState(currentMonth);
+
+  const availableMonths =
+    [...new Set(
+      budgets.map(
+        budget => budget.month
+      )
+    )].sort().reverse();
+
+  const filteredBudgets =
+    budgets.filter(
+      budget =>
+        budget.month === selectedMonth
+    );
+
+  const totalBudget =
+    filteredBudgets.reduce(
+      (total, budget) =>
+        total + budget.budgetAmount,
+      0
+    );
+
+
+  const totalSpent =
+    filteredBudgets.reduce(
+      (total, budget) =>
+        total + budget.spentAmount,
+      0
+    );
+
+  const totalRemaining =
+    filteredBudgets.reduce(
+      (total, budget) =>
+        total + budget.remainingAmount,
+      0
+    );
+
+  const formatCurrency = (
+    value: number
+  ) => {
+
+    return new Intl.NumberFormat(
+      'es-ES',
+      {
+        style: 'currency',
+        currency: 'EUR'
+      }
+    ).format(value);
+  };
 
   const loadData = async () => {
 
@@ -142,6 +197,7 @@ export default function BudgetsPage() {
       }
     };
 
+
   if (loading) {
 
     return (
@@ -158,6 +214,7 @@ export default function BudgetsPage() {
       </>
     );
   }
+
 
   return (
 
@@ -220,11 +277,87 @@ export default function BudgetsPage() {
             </div>
 
             <span>
-              {budgets.length} budgets
+              {filteredBudgets.length} budgets
             </span>
 
           </div>
+          <div className="budget-filter">
 
+            <label>
+              Month
+            </label>
+
+            <select
+              value={selectedMonth}
+              onChange={event =>
+                setSelectedMonth(
+                  event.target.value
+                )
+              }
+            >
+
+              {availableMonths.map(
+                month => (
+
+                  <option
+                    key={month}
+                    value={month}
+                  >
+                    {month}
+                  </option>
+
+                )
+              )}
+
+            </select>
+
+          </div>
+
+          <div className="budget-summary">
+
+            <div className="summary-card">
+
+              <span>
+                Total budget
+              </span>
+
+              <strong>
+                {formatCurrency(totalBudget)}
+              </strong>
+
+            </div>
+
+            <div className="summary-card">
+
+              <span>
+                Total spent
+              </span>
+
+              <strong>
+                {formatCurrency(totalSpent)}
+              </strong>
+
+            </div>
+
+            <div className="summary-card">
+
+              <span>
+                Remaining
+              </span>
+
+              <strong
+                className={
+                  totalRemaining < 0
+                    ? 'negative'
+                    : ''
+                }
+              >
+                {formatCurrency(totalRemaining)}
+              </strong>
+
+            </div>
+
+          </div>
           {budgets.length === 0 ? (
 
             <div className="empty-state">
@@ -247,17 +380,44 @@ export default function BudgetsPage() {
 
             <div className="budgets-list">
 
-              {budgets.map(
-                budget => (
+              {filteredBudgets.length === 0 ? (
 
-                  <BudgetCard
-                    key={budget.id}
-                    budget={budget}
-                    onDelete={handleDelete}
-                  />
+  <div className="empty-state">
 
-                )
-              )}
+    <span>
+      📊
+    </span>
+
+    <h3>
+      No budgets for this month
+    </h3>
+
+    <p>
+      Create a budget to start
+      tracking your spending.
+    </p>
+
+  </div>
+
+) : (
+
+  <div className="budgets-list">
+
+    {filteredBudgets.map(
+      budget => (
+
+        <BudgetCard
+          key={budget.id}
+          budget={budget}
+          onDelete={handleDelete}
+        />
+
+      )
+    )}
+
+  </div>
+
+)}
 
             </div>
 

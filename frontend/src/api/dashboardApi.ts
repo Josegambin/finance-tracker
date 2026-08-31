@@ -35,3 +35,30 @@ export async function getDashboard():
 
   return response.json();
 }
+
+export interface ExpenseByCategory {
+  name: string;
+  amount: number;
+}
+
+export async function
+getExpensesByCategory():
+  Promise<ExpenseByCategory[]> {
+
+  const response =
+    await fetch(
+      `${API_URL}/dashboard/expenses-by-category`,
+      {
+        headers: getHeaders()
+      }
+    );
+
+  if (!response.ok) {
+
+    throw new Error(
+      'Error loading expenses by category'
+    );
+  }
+
+  return response.json();
+}

@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import finance_tracker_api.dto.dashboard.ExpenseByCategoryResponse;
 import finance_tracker_api.entity.Transaction;
 
 import java.math.BigDecimal;
@@ -11,37 +12,44 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface TransactionRepository
-                extends JpaRepository<Transaction, Long> {
+    extends JpaRepository<Transaction, Long> {
 
-        List<Transaction> findByUserIdOrderByDateDesc(
-                        Long userId);
+  List<Transaction> findByUserIdOrderByDateDesc(
+      Long userId);
 
-        List<Transaction> findTop5ByUserIdOrderByDateDesc(
-                        Long userId);
-                        
-        @Query("""
-                SELECT COALESCE(
-                SUM(t.amount),
-                0
-                )
-                FROM Transaction t
-                WHERE t.user.id = :userId
-                AND t.category.id = :categoryId
-                AND t.type = 'EXPENSE'
-                AND t.date BETWEEN :startDate AND :endDate
-                """
-        )
-        BigDecimal calculateSpentAmount(
-                @Param("userId")
-                Long userId,
+  List<Transaction> findTop5ByUserIdOrderByDateDesc(
+      Long userId);
 
-                @Param("categoryId")
-                Long categoryId,
+  @Query("""
+      SELECT COALESCE(
+      SUM(t.amount),
+      0
+      )
+      FROM Transaction t
+      WHERE t.user.id = :userId
+      AND t.category.id = :categoryId
+      AND t.type = 'EXPENSE'
+      AND t.date BETWEEN :startDate AND :endDate
+      """)
+  BigDecimal calculateSpentAmount(
+      @Param("userId") Long userId,
 
-                @Param("startDate")
-                LocalDate startDate,
+      @Param("categoryId") Long categoryId,
 
-                @Param("endDate")
-                LocalDate endDate
-        );
+      @Param("startDate") LocalDate startDate,
+
+      @Param("endDate") LocalDate endDate);
+
+  @Query("""
+          SELECT new finance_tracker_api.dto.dashboard.ExpenseByCategoryResponse(
+              t.category.name,
+              SUM(t.amount)
+          )
+          FROM Transaction t
+          WHERE t.user.id = :userId
+            AND t.type = TransactionType.EXPENSE
+          GROUP BY t.category.name
+          ORDER BY SUM(t.amount) DESC
+      """)
+  List<ExpenseByCategoryResponse> findExpensesByCategory(@Param("userId") Long userId);
 }
