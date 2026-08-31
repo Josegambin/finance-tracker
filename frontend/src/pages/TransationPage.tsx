@@ -27,8 +27,10 @@ import type {
 
 import type {
   Transaction,
-  CreateTransactionRequest
+  CreateTransactionRequest,
+  TransactionType,
 } from '../types/transaction';
+import TransactionFilters from '../components/TransactionFilters';
 
 export default function TransactionsPage() {
 
@@ -43,6 +45,14 @@ export default function TransactionsPage() {
 
   const [error, setError] =
     useState<string | null>(null);
+
+  const [search, setSearch] =
+    useState('');
+
+  const [typeFilter, setTypeFilter] =
+    useState<
+      TransactionType | 'ALL'
+    >('ALL');
 
   const loadData = async () => {
 
@@ -145,6 +155,28 @@ export default function TransactionsPage() {
     }
   };
 
+  const filteredTransactions =
+  transactions.filter(
+    transaction => {
+
+      const matchesSearch =
+        transaction.description
+          .toLowerCase()
+          .includes(
+            search.toLowerCase()
+          );
+
+      const matchesType =
+        typeFilter === 'ALL' ||
+        transaction.type === typeFilter;
+
+      return (
+        matchesSearch &&
+        matchesType
+      );
+    }
+  );
+
   if (loading) {
 
     return (
@@ -217,6 +249,12 @@ export default function TransactionsPage() {
 
         <section className="content-card">
 
+        <TransactionFilters
+          search={search}
+          type={typeFilter}
+          onSearchChange={setSearch}
+          onTypeChange={setTypeFilter}
+        />
           <div className="section-header">
 
             <div>
@@ -226,7 +264,7 @@ export default function TransactionsPage() {
               </h2>
 
               <p>
-                {transactions.length} transactions
+                {filteredTransactions.length} transactions
               </p>
 
             </div>
@@ -234,7 +272,7 @@ export default function TransactionsPage() {
           </div>
 
           <TransactionList
-            transactions={transactions}
+            transactions={filteredTransactions}
             onDelete={handleDelete}
           />
 

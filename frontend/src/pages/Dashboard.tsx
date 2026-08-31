@@ -13,7 +13,6 @@ import Navbar from '../components/Navbar';
 import DashboardCard
   from '../components/DashboardCard';
 
-
 import RecentTransactions
   from '../components/RecentTransaction';
 
@@ -24,35 +23,100 @@ import type {
 import type {
   ExpenseByCategory
 } from '../api/dashboardApi';
-import ExpensesByCategoryChart from '../components/charts/ExpensesByCategoryChart';
+
+import ExpensesByCategoryChart
+  from '../components/charts/ExpensesByCategoryChart';
 
 import type {
   BudgetVsSpentData
 } from '../components/charts/BudgetVsSpentChart';
-import { getBudgets } from '../api/budgetApi';
-import BudgetVsSpentChart from '../components/charts/BudgetVsSpentChart';
+
+import BudgetVsSpentChart
+  from '../components/charts/BudgetVsSpentChart';
+
+import { getBudgets }
+  from '../api/budgetApi';
+
+import type {
+  Budget
+} from '../types/budget';
+
 
 export default function Dashboard() {
 
-  const [dashboard, setDashboard] =
-    useState<Dashboard | null>(null);
+  // =========================
+  // DASHBOARD
+  // =========================
 
-  const [loading, setLoading] =
-    useState(true);
+  const [
+    dashboard,
+    setDashboard
+  ] = useState<Dashboard | null>(null);
 
-  const [error, setError] =
-    useState<string | null>(null);
+
+  // =========================
+  // LOADING
+  // =========================
+
+  const [
+    loading,
+    setLoading
+  ] = useState(true);
+
+
+  // =========================
+  // ERROR
+  // =========================
+
+  const [
+    error,
+    setError
+  ] = useState<string | null>(null);
+
+
+  // =========================
+  // EXPENSES BY CATEGORY
+  // =========================
 
   const [
     expensesByCategory,
     setExpensesByCategory
   ] = useState<ExpenseByCategory[]>([]);
 
+
+  // =========================
+  // BUDGET VS SPENT
+  // =========================
+
   const [
     budgetVsSpent,
     setBudgetVsSpent
   ] = useState<BudgetVsSpentData[]>([]);
 
+
+  // =========================
+  // BUDGETS
+  // =========================
+
+  const [
+    budgets,
+    setBudgets
+  ] = useState<Budget[]>([]);
+
+
+  // =========================
+  // SELECTED MONTH
+  // =========================
+
+  const [
+    selectedMonth,
+    setSelectedMonth
+  ] = useState('2026-08');
+
+
+  // =========================
+  // LOAD DASHBOARD
+  // =========================
 
   const loadDashboard = async () => {
 
@@ -62,10 +126,11 @@ export default function Dashboard() {
 
       setError(null);
 
+
       const [
         dashboardData,
         categoryData,
-        budgets
+        budgetsData
       ] = await Promise.all([
 
         getDashboard(),
@@ -76,29 +141,27 @@ export default function Dashboard() {
 
       ]);
 
+
+      // Dashboard
+
       setDashboard(
         dashboardData
       );
+
+
+      // Expenses by category
 
       setExpensesByCategory(
         categoryData
       );
 
-      const chartData =
-        budgets.map(budget => ({
-          name: `${budget.categoryName} (${budget.month})`,
-          budget: budget.budgetAmount,
-          spent: budget.spentAmount
-        }));
 
+      // Budgets
 
-      setBudgetVsSpent(
-        chartData
+      setBudgets(
+        budgetsData
       );
 
-      setBudgetVsSpent(
-        chartData
-      );
 
     } catch (error) {
 
@@ -108,6 +171,7 @@ export default function Dashboard() {
         'Error loading dashboard'
       );
 
+
     } finally {
 
       setLoading(false);
@@ -115,11 +179,61 @@ export default function Dashboard() {
     }
   };
 
+
+  // =========================
+  // INITIAL LOAD
+  // =========================
+
   useEffect(() => {
 
     loadDashboard();
 
   }, []);
+
+
+  // =========================
+  // FILTER BUDGETS BY MONTH
+  // =========================
+
+  useEffect(() => {
+
+    const filteredBudgets =
+      budgets.filter(
+        budget =>
+          budget.month === selectedMonth
+      );
+
+
+    const chartData =
+      filteredBudgets.map(
+        budget => ({
+
+          name:
+            budget.categoryName,
+
+          budget:
+            budget.budgetAmount,
+
+          spent:
+            budget.spentAmount
+
+        })
+      );
+
+
+    setBudgetVsSpent(
+      chartData
+    );
+
+  }, [
+    budgets,
+    selectedMonth
+  ]);
+
+
+  // =========================
+  // LOADING VIEW
+  // =========================
 
   if (loading) {
 
@@ -134,9 +248,15 @@ export default function Dashboard() {
           </p>
 
         </main>
+
       </>
     );
   }
+
+
+  // =========================
+  // ERROR VIEW
+  // =========================
 
   if (error) {
 
@@ -147,150 +267,233 @@ export default function Dashboard() {
         <main className="page-container">
 
           <div className="error-message">
+
             {error}
+
           </div>
 
         </main>
+
       </>
     );
   }
 
+
+  // =========================
+  // NO DASHBOARD
+  // =========================
+
   if (!dashboard) {
 
     return null;
+
   }
 
- return (
-  <>
-    <Navbar />
 
-    <main className="page-container">
+  // =========================
+  // VIEW
+  // =========================
 
-      <div className="page-header">
+  return (
 
-        <div>
+    <>
+      <Navbar />
 
-          <p className="eyebrow">
-            FINANCE OVERVIEW
-          </p>
-
-          <h1>
-            Dashboard
-          </h1>
-
-          <p className="page-description">
-            Here's an overview of your finances.
-          </p>
-
-        </div>
-
-      </div>
+      <main className="page-container">
 
 
-      {/* CARDS */}
+        {/* =========================
+            HEADER
+        ========================= */}
 
-      <section className="dashboard-grid">
-
-        <DashboardCard
-          title="Total balance"
-          value={dashboard.balance}
-          icon="💰"
-          type="balance"
-        />
-
-        <DashboardCard
-          title="Total income"
-          value={dashboard.totalIncome}
-          icon="↗"
-          type="income"
-        />
-
-        <DashboardCard
-          title="Total expenses"
-          value={dashboard.totalExpenses}
-          icon="↘"
-          type="expense"
-        />
-
-      </section>
-
-
-      {/* EXPENSES BY CATEGORY */}
-
-      <section className="dashboard-chart-card">
-
-        <div className="chart-header">
-
-          <h2>
-            Expenses by category
-          </h2>
-
-          <p>
-            Where your money is going.
-          </p>
-
-        </div>
-
-        <ExpensesByCategoryChart
-          data={expensesByCategory}
-        />
-
-      </section>
-
-
-      {/* BUDGET VS SPENT */}
-
-      <section className="dashboard-chart-card">
-
-        <div className="chart-header">
-
-          <h2>
-            Budget vs spent
-          </h2>
-
-          <p>
-            Compare your budget with your actual spending.
-          </p>
-
-        </div>
-
-        <BudgetVsSpentChart
-          data={budgetVsSpent}
-        />
-
-      </section>
-
-
-      {/* RECENT TRANSACTIONS */}
-
-      <section className="content-card">
-
-        <div className="section-header">
+        <div className="page-header">
 
           <div>
 
-            <h2>
-              Recent transactions
-            </h2>
-
-            <p>
-              Your latest financial activity.
+            <p className="eyebrow">
+              FINANCE OVERVIEW
             </p>
+
+            <h1>
+              Dashboard
+            </h1>
+
+            <p className="page-description">
+              Here's an overview of your finances.
+            </p>
+
+
+            {/* MONTH SELECTOR */}
+
+            <div className="month-selector">
+
+              <label htmlFor="month">
+                Month
+              </label>
+
+
+              <select
+                id="month"
+                value={selectedMonth}
+                onChange={(event) =>
+                  setSelectedMonth(
+                    event.target.value
+                  )
+                }
+              >
+
+                <option value="2026-09">
+                  September 2026
+                </option>
+
+                <option value="2026-08">
+                  August 2026
+                </option>
+
+                <option value="2026-04">
+                  April 2026
+                </option>
+
+              </select>
+
+            </div>
 
           </div>
 
         </div>
 
-        <RecentTransactions
-          transactions={
-            dashboard.recentTransactions
-          }
-        />
 
-      </section>
+        {/* =========================
+            DASHBOARD CARDS
+        ========================= */}
 
-    </main>
+        <section className="dashboard-grid">
 
-  </>
-);
+
+          <DashboardCard
+            title="Total balance"
+            value={dashboard.balance}
+            icon="💰"
+            type="balance"
+          />
+
+
+          <DashboardCard
+            title="Total income"
+            value={dashboard.totalIncome}
+            icon="↗"
+            type="income"
+          />
+
+
+          <DashboardCard
+            title="Total expenses"
+            value={dashboard.totalExpenses}
+            icon="↘"
+            type="expense"
+          />
+
+
+        </section>
+
+
+        {/* =========================
+            EXPENSES BY CATEGORY
+        ========================= */}
+
+        <section className="dashboard-chart-card">
+
+
+          <div className="chart-header">
+
+            <h2>
+              Expenses by category
+            </h2>
+
+            <p>
+              Where your money is going.
+            </p>
+
+          </div>
+
+
+          <ExpensesByCategoryChart
+            data={
+              expensesByCategory
+            }
+          />
+
+
+        </section>
+
+
+        {/* =========================
+            BUDGET VS SPENT
+        ========================= */}
+
+        <section className="dashboard-chart-card">
+
+
+          <div className="chart-header">
+
+            <h2>
+              Budget vs spent
+            </h2>
+
+            <p>
+              Compare your budget with your actual spending.
+            </p>
+
+          </div>
+
+
+          <BudgetVsSpentChart
+            data={
+              budgetVsSpent
+            }
+          />
+
+
+        </section>
+
+
+        {/* =========================
+            RECENT TRANSACTIONS
+        ========================= */}
+
+        <section className="content-card">
+
+
+          <div className="section-header">
+
+            <div>
+
+              <h2>
+                Recent transactions
+              </h2>
+
+              <p>
+                Your latest financial activity.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <RecentTransactions
+            transactions={
+              dashboard.recentTransactions
+            }
+          />
+
+
+        </section>
+
+
+      </main>
+
+    </>
+
+  );
 }
