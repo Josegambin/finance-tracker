@@ -7,6 +7,7 @@ import './styles/categories.css';
 import './styles/transaction.css';
 import './styles/dashboard.css';
 import './styles/navbar.css';
+import './styles/pagination.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

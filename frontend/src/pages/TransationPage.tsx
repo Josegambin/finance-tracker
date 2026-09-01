@@ -21,6 +21,9 @@ import TransactionForm
 import TransactionList
   from '../components/TransactionList';
 
+import TransactionFilters
+  from '../components/TransactionFilters';
+
 import type {
   Category
 } from '../types/category';
@@ -28,9 +31,8 @@ import type {
 import type {
   Transaction,
   CreateTransactionRequest,
-  TransactionType,
+  TransactionType
 } from '../types/transaction';
-import TransactionFilters from '../components/TransactionFilters';
 
 export default function TransactionsPage() {
 
@@ -39,6 +41,15 @@ export default function TransactionsPage() {
 
   const [categories, setCategories] =
     useState<Category[]>([]);
+
+  const [currentPage, setCurrentPage] =
+    useState(0);
+
+  const [totalPages, setTotalPages] =
+    useState(0);
+
+  const [totalElements, setTotalElements] =
+    useState(0);
 
   const [loading, setLoading] =
     useState(true);
@@ -60,22 +71,71 @@ export default function TransactionsPage() {
   const [categoryFilter, setCategoryFilter] =
     useState<number | 'ALL'>('ALL');
 
+  const [sort, setSort] =
+  useState('date,desc');
+
+
+  /*
+   * ============================
+   * CLEAR FILTERS
+   * ============================
+   */
+
+  const clearFilters = () => {
+
+    setSearch('');
+
+    setTypeFilter('ALL');
+
+    setCategoryFilter('ALL');
+
+    setMonthFilter('');
+
+    setSort('date,desc');
+
+    setCurrentPage(0);
+
+  };
+
+
+  /*
+   * ============================
+   * LOAD DATA
+   * ============================
+   */
+
   const loadData = async () => {
 
     try {
 
       setLoading(true);
 
+      setError(null);
+
       const [
         transactionsData,
         categoriesData
       ] = await Promise.all([
-        getTransactions(),
+
+        getTransactions(
+          currentPage,
+          5, sort
+        ),
+
         getCategories()
+
       ]);
 
       setTransactions(
-        transactionsData
+        transactionsData.content
+      );
+
+      setTotalPages(
+        transactionsData.totalPages
+      );
+
+      setTotalElements(
+        transactionsData.totalElements
       );
 
       setCategories(
@@ -85,22 +145,40 @@ export default function TransactionsPage() {
     } catch (error) {
 
       setError(
+
         error instanceof Error
           ? error.message
           : 'Unexpected error'
+
       );
 
     } finally {
 
       setLoading(false);
+
     }
+
   };
+
+
+  /*
+   * ============================
+   * LOAD WHEN PAGE CHANGES
+   * ============================
+   */
 
   useEffect(() => {
 
     loadData();
 
-  }, []);
+  }, [currentPage, sort]);
+
+
+  /*
+   * ============================
+   * CREATE TRANSACTION
+   * ============================
+   */
 
   const handleCreate = async (
     transaction: CreateTransactionRequest
@@ -108,31 +186,37 @@ export default function TransactionsPage() {
 
     try {
 
-      const newTransaction =
-        await createTransaction(
-          transaction
-        );
-
-      setTransactions(
-        currentTransactions => [
-
-          newTransaction,
-
-          ...currentTransactions
-
-        ]
+      await createTransaction(
+        transaction
       );
+
+      /*
+       * Volvemos a la primera página
+       * para mostrar la nueva transacción.
+       */
+
+      setCurrentPage(0);
 
     } catch (error) {
 
       setError(
+
         error instanceof Error
           ? error.message
           : 'Error creating transaction'
+
       );
 
     }
+
   };
+
+
+  /*
+   * ============================
+   * DELETE TRANSACTION
+   * ============================
+   */
 
   const handleDelete = async (
     id: number
@@ -142,77 +226,151 @@ export default function TransactionsPage() {
 
       await deleteTransaction(id);
 
-      setTransactions(
-        currentTransactions =>
-          currentTransactions.filter(
-            transaction =>
-              transaction.id !== id
-          )
-      );
+      /*
+       * Recargamos la página actual
+       * después de eliminar.
+       */
+
+      await loadData();
 
     } catch (error) {
 
       setError(
+
         error instanceof Error
           ? error.message
           : 'Error deleting transaction'
+
       );
 
     }
+
   };
 
-  const availableMonths =
-  Array.from(
-    new Set(
-      transactions.map(
-        transaction =>
-          transaction.date.substring(0, 7)
-      )
-    )
-  ).sort().reverse();
 
-  const filteredTransactions =
-  transactions.filter(
-    transaction => {
+  /*
+   * ============================
+   * PAGINATION
+   * ============================
+   */
 
-      const matchesSearch =
-        transaction.description
-          .toLowerCase()
-          .includes(
-            search.toLowerCase()
-          );
+  const goToPreviousPage = () => {
 
+    if (currentPage > 0) {
 
-      const matchesType =
-        typeFilter === 'ALL' ||
-        transaction.type === typeFilter;
-
-
-      const matchesCategory =
-        categoryFilter === 'ALL' ||
-        transaction.categoryId === categoryFilter;
-
-
-      const matchesMonth =
-        monthFilter === 'ALL' ||
-        transaction.date.substring(0, 7) === monthFilter;
-
-
-      return (
-        matchesSearch &&
-        matchesType &&
-        matchesCategory &&
-        matchesMonth
+      setCurrentPage(
+        currentPage - 1
       );
 
     }
-  );
+
+  };
+
+
+  const goToNextPage = () => {
+
+    if (
+      currentPage <
+      totalPages - 1
+    ) {
+
+      setCurrentPage(
+        currentPage + 1
+      );
+
+    }
+
+  };
+
+
+  /*
+   * ============================
+   * AVAILABLE MONTHS
+   * ============================
+   */
+
+  const availableMonths =
+    Array.from(
+
+      new Set(
+
+        transactions.map(
+          transaction =>
+            transaction.date.substring(
+              0,
+              7
+            )
+        )
+
+      )
+
+    )
+      .sort()
+      .reverse();
+
+
+  /*
+   * ============================
+   * FRONTEND FILTERS
+   * ============================
+   */
+
+  const filteredTransactions =
+    transactions.filter(
+      transaction => {
+
+        const matchesSearch =
+          transaction.description
+            .toLowerCase()
+            .includes(
+              search.toLowerCase()
+            );
+
+
+        const matchesType =
+          typeFilter === 'ALL' ||
+          transaction.type === typeFilter;
+
+
+        const matchesCategory =
+          categoryFilter === 'ALL' ||
+          transaction.categoryId ===
+            categoryFilter;
+
+
+        const matchesMonth =
+          monthFilter === 'ALL' ||
+          transaction.date.substring(
+            0,
+            7
+          ) === monthFilter;
+
+
+        return (
+
+          matchesSearch &&
+          matchesType &&
+          matchesCategory &&
+          matchesMonth
+
+        );
+
+      }
+    );
+
+
+  /*
+   * ============================
+   * LOADING
+   * ============================
+   */
 
   if (loading) {
 
     return (
 
       <>
+
         <Navbar />
 
         <main className="page-container">
@@ -226,14 +384,26 @@ export default function TransactionsPage() {
       </>
 
     );
+
   }
+
+
+  /*
+   * ============================
+   * PAGE
+   * ============================
+   */
 
   return (
 
     <>
+
       <Navbar />
 
       <main className="page-container">
+
+
+        {/* HEADER */}
 
         <div className="page-header">
 
@@ -255,6 +425,9 @@ export default function TransactionsPage() {
 
         </div>
 
+
+        {/* ERROR */}
+
         {error && (
 
           <div className="error-message">
@@ -264,6 +437,9 @@ export default function TransactionsPage() {
           </div>
 
         )}
+
+
+        {/* CREATE TRANSACTION */}
 
         <section className="content-card">
 
@@ -278,20 +454,57 @@ export default function TransactionsPage() {
 
         </section>
 
+
+        {/* TRANSACTIONS */}
+
         <section className="content-card">
 
-       <TransactionFilters
-          search={search}
-          type={typeFilter}
-          categoryId={categoryFilter}
-          month={monthFilter}
-          categories={categories}
-          months={availableMonths}
-          onSearchChange={setSearch}
-          onTypeChange={setTypeFilter}
-          onCategoryChange={setCategoryFilter}
-          onMonthChange={setMonthFilter}
-        />
+
+          {/* FILTERS */}
+
+          
+
+          <TransactionFilters
+
+  search={search}
+
+  type={typeFilter}
+
+  categoryId={categoryFilter}
+
+  month={monthFilter}
+
+  sort={sort}
+
+  categories={categories}
+
+  months={availableMonths}
+
+  onSearchChange={setSearch}
+
+  onTypeChange={setTypeFilter}
+
+  onCategoryChange={
+    setCategoryFilter
+  }
+
+  onMonthChange={
+    setMonthFilter
+  }
+
+  onSortChange={
+    (value) => {
+
+      setSort(value);
+
+      setCurrentPage(0);
+
+    }
+  }
+
+/>
+
+          {/* SECTION HEADER */}
 
           <div className="section-header">
 
@@ -302,16 +515,74 @@ export default function TransactionsPage() {
               </h2>
 
               <p>
-                {filteredTransactions.length} transactions
+                {totalElements} transactions
               </p>
 
             </div>
 
+
+            <button
+              type="button"
+              onClick={clearFilters}
+            >
+              Clear filters
+            </button>
+
           </div>
 
+
+      
+          {totalPages > 1 && (
+
+            <div className="pagination">
+
+              <button
+                type="button"
+                onClick={
+                  goToPreviousPage
+                }
+                disabled={
+                  currentPage === 0
+                }
+              >
+                ← Previous
+              </button>
+
+
+              <span>
+                Page {currentPage + 1} of {totalPages}
+              </span>
+
+
+              <button
+                type="button"
+                onClick={
+                  goToNextPage
+                }
+                disabled={
+                  currentPage ===
+                  totalPages - 1
+                }
+              >
+                Next →
+
+              </button>
+
+            </div>
+
+          )}
+
+
           <TransactionList
-            transactions={filteredTransactions}
-            onDelete={handleDelete}
+
+            transactions={
+              filteredTransactions
+            }
+
+            onDelete={
+              handleDelete
+            }
+
           />
 
         </section>
@@ -321,4 +592,5 @@ export default function TransactionsPage() {
     </>
 
   );
+
 }

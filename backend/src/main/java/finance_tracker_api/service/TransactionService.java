@@ -1,14 +1,16 @@
 package finance_tracker_api.service;
 
 import finance_tracker_api.dto.transaction.CreateTransactionRequest;
+import finance_tracker_api.dto.transaction.TransactionPageResponse;
 import finance_tracker_api.dto.transaction.TransactionResponse;
 import finance_tracker_api.entity.Category;
 import finance_tracker_api.entity.Transaction;
 import finance_tracker_api.entity.User;
 import finance_tracker_api.repository.CategoryRepository;
-
 import finance_tracker_api.repository.TransactionRepository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,18 +37,33 @@ public class TransactionService {
                 currentUserService;
     }
 
-    public List<TransactionResponse> findAll() {
+    public TransactionPageResponse findAll(
+            Pageable pageable
+    ) {
 
         User user =
                 currentUserService.getCurrentUser();
 
-        return transactionRepository
-                .findByUserIdOrderByDateDesc(
-                        user.getId()
-                )
-                .stream()
-                .map(this::toResponse)
-                .toList();
+        Page<Transaction> page =
+                transactionRepository
+                        .findByUserId(
+                                user.getId(),
+                                pageable
+                        );
+
+        List<TransactionResponse> content =
+                page.getContent()
+                        .stream()
+                        .map(this::toResponse)
+                        .toList();
+
+        return new TransactionPageResponse(
+                content,
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.getNumber(),
+                page.getSize()
+        );
     }
 
     public TransactionResponse create(
@@ -187,6 +204,4 @@ public class TransactionService {
                         .getName()
         );
     }
-
-    
 }

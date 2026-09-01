@@ -1,9 +1,11 @@
 import type {
   Transaction,
-  CreateTransactionRequest
+  CreateTransactionRequest,
+  TransactionPageResponse
 } from '../types/transaction';
 
-const API_URL = 'http://localhost:8080/api';
+const API_URL =
+  'http://localhost:8080/api';
 
 function getHeaders(): HeadersInit {
 
@@ -13,17 +15,24 @@ function getHeaders(): HeadersInit {
     );
 
   return {
+
     'Content-Type': 'application/json',
+
     Authorization: `Bearer ${token}`
+
   };
+
 }
 
-export async function getTransactions():
-  Promise<Transaction[]> {
+export async function getTransactions(
+  page: number = 0,
+  size: number = 5,
+  sort: string = 'date,desc'
+): Promise<TransactionPageResponse> {
 
   const response =
     await fetch(
-      `${API_URL}/transactions`,
+      `${API_URL}/transactions?page=${page}&size=${size}&sort=${sort}`,
       {
         headers: getHeaders()
       }
@@ -34,9 +43,11 @@ export async function getTransactions():
     throw new Error(
       'Error loading transactions'
     );
+
   }
 
   return response.json();
+
 }
 
 export async function createTransaction(
@@ -47,11 +58,13 @@ export async function createTransaction(
     await fetch(
       `${API_URL}/transactions`,
       {
+
         method: 'POST',
 
         headers: getHeaders(),
 
         body: JSON.stringify(request)
+
       }
     );
 
@@ -60,9 +73,11 @@ export async function createTransaction(
     throw new Error(
       'Error creating transaction'
     );
+
   }
 
   return response.json();
+
 }
 
 export async function deleteTransaction(
@@ -73,9 +88,11 @@ export async function deleteTransaction(
     await fetch(
       `${API_URL}/transactions/${id}`,
       {
+
         method: 'DELETE',
 
         headers: getHeaders()
+
       }
     );
 
@@ -84,5 +101,7 @@ export async function deleteTransaction(
     throw new Error(
       'Error deleting transaction'
     );
+
   }
+
 }

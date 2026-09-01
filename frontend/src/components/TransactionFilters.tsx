@@ -1,11 +1,10 @@
 import type {
-  TransactionType
-} from '../types/transaction';
-
-import type {
   Category
 } from '../types/category';
 
+import type {
+  TransactionType
+} from '../types/transaction';
 
 interface TransactionFiltersProps {
 
@@ -16,6 +15,8 @@ interface TransactionFiltersProps {
   categoryId: number | 'ALL';
 
   month: string;
+
+  sort: string;
 
   categories: Category[];
 
@@ -36,49 +37,46 @@ interface TransactionFiltersProps {
   onMonthChange: (
     value: string
   ) => void;
-}
 
+  onSortChange: (
+    value: string
+  ) => void;
+
+}
 
 export default function TransactionFilters({
 
   search,
-
   type,
-
   categoryId,
-
   month,
+  sort,
 
   categories,
-
   months,
 
   onSearchChange,
-
   onTypeChange,
-
   onCategoryChange,
-
-  onMonthChange
+  onMonthChange,
+  onSortChange
 
 }: TransactionFiltersProps) {
-
 
   return (
 
     <div className="transaction-filters">
 
-
       {/* SEARCH */}
 
-      <div className="filter-group">
+      <div className="filter-group search-filter">
 
-        <label htmlFor="search">
+        <label htmlFor="transaction-search">
           Search
         </label>
 
         <input
-          id="search"
+          id="transaction-search"
           type="text"
           placeholder="Search transactions..."
           value={search}
@@ -96,23 +94,23 @@ export default function TransactionFilters({
 
       <div className="filter-group">
 
-        <label htmlFor="type">
+        <label htmlFor="transaction-type">
           Type
         </label>
 
         <select
-          id="type"
+          id="transaction-type"
           value={type}
           onChange={(event) =>
             onTypeChange(
               event.target.value as
-                TransactionType | 'ALL'
+              TransactionType | 'ALL'
             )
           }
         >
 
           <option value="ALL">
-            All
+            All types
           </option>
 
           <option value="INCOME">
@@ -132,12 +130,12 @@ export default function TransactionFilters({
 
       <div className="filter-group">
 
-        <label htmlFor="category">
+        <label htmlFor="transaction-category">
           Category
         </label>
 
         <select
-          id="category"
+          id="transaction-category"
           value={categoryId}
           onChange={(event) => {
 
@@ -157,7 +155,6 @@ export default function TransactionFilters({
             All categories
           </option>
 
-
           {categories.map(
             category => (
 
@@ -165,9 +162,7 @@ export default function TransactionFilters({
                 key={category.id}
                 value={category.id}
               >
-
                 {category.name}
-
               </option>
 
             )
@@ -182,12 +177,12 @@ export default function TransactionFilters({
 
       <div className="filter-group">
 
-        <label htmlFor="month">
+        <label htmlFor="transaction-month">
           Month
         </label>
 
         <select
-          id="month"
+          id="transaction-month"
           value={month}
           onChange={(event) =>
             onMonthChange(
@@ -200,7 +195,6 @@ export default function TransactionFilters({
             All months
           </option>
 
-
           {months.map(
             currentMonth => (
 
@@ -208,11 +202,7 @@ export default function TransactionFilters({
                 key={currentMonth}
                 value={currentMonth}
               >
-
-                {formatMonth(
-                  currentMonth
-                )}
-
+                {currentMonth}
               </option>
 
             )
@@ -223,42 +213,56 @@ export default function TransactionFilters({
       </div>
 
 
+      {/* SORT */}
+
+      <div className="filter-group sort-filter">
+
+        <label htmlFor="transaction-sort">
+          Sort by
+        </label>
+
+        <select
+          id="transaction-sort"
+          value={sort}
+          onChange={(event) => {
+
+            onSortChange(
+              event.target.value
+            );
+
+          }}
+        >
+
+          <option value="date,desc">
+            Date — Newest first
+          </option>
+
+          <option value="date,asc">
+            Date — Oldest first
+          </option>
+
+          <option value="amount,desc">
+            Amount — Highest first
+          </option>
+
+          <option value="amount,asc">
+            Amount — Lowest first
+          </option>
+
+          <option value="description,asc">
+            Description — A → Z
+          </option>
+
+          <option value="description,desc">
+            Description — Z → A
+          </option>
+
+        </select>
+
+      </div>
+
     </div>
 
   );
-}
 
-
-/**
- * Converts:
- *
- * 2026-08
- *
- * into:
- *
- * August 2026
- */
-function formatMonth(
-  month: string
-): string {
-
-  const [
-    year,
-    monthNumber
-  ] = month.split('-');
-
-  const date =
-    new Date(
-      Number(year),
-      Number(monthNumber) - 1,
-      1
-    );
-
-  return date.toLocaleDateString(
-    'en-US',
-    {
-      month: 'long',
-      year: 'numeric'
-    }
-  );
 }

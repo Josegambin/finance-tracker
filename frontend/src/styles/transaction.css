@@ -11,35 +11,64 @@
   align-items: end;
 }
 
+
+/* ============================= */
+/* TRANSACTION LIST */
+/* ============================= */
+
 .transaction-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
+
+
+/* ============================= */
+/* TRANSACTION CARD */
+/* ============================= */
 
 .transaction-card {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 
-  padding: 16px;
+  padding: 18px 20px;
 
   border: 1px solid #34445c;
   border-radius: 14px;
 
   background: #172033;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .transaction-card:hover {
   transform: translateY(-1px);
+
   border-color: #4b6385;
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.15);
 }
+
+
+/* ============================= */
+/* LEFT SIDE */
+/* ============================= */
 
 .transaction-info {
   display: flex;
   align-items: center;
   gap: 14px;
 }
+
+
+/* ============================= */
+/* ICON */
+/* ============================= */
 
 .transaction-icon {
   width: 44px;
@@ -65,24 +94,61 @@
   color: #f87171;
 }
 
+
+/* ============================= */
+/* DETAILS */
+/* ============================= */
+
+.transaction-details h3 {
+  margin: 0 0 6px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  color: #f8fafc;
+}
+
 .transaction-meta {
   display: flex;
-  gap: 12px;
+  align-items: center;
 
+  gap: 10px;
   margin-top: 4px;
 
   color: #94a3b8;
-  font-size: 14px;
+
+  font-size: 13px;
 }
+
+.transaction-category {
+  font-weight: 500;
+}
+
+.transaction-date {
+  color: #64748b;
+}
+
+.transaction-date::before {
+  content: "•";
+  margin-right: 10px;
+}
+
+
+/* ============================= */
+/* RIGHT SIDE */
+/* ============================= */
 
 .transaction-actions {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
 }
 
 .amount {
-  font-size: 17px;
+  font-size: 16px;
+  font-weight: 700;
+
+  white-space: nowrap;
 }
 
 .amount.income {
@@ -93,6 +159,96 @@
   color: #f87171;
 }
 
+
+/* ============================= */
+/* DELETE BUTTON */
+/* ============================= */
+
+.delete-button {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #34445c;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #94a3b8;
+
+  cursor: pointer;
+
+  font-size: 15px;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.delete-button:hover {
+  background: #4a1d23;
+
+  border-color: #7f1d1d;
+
+  color: #f87171;
+
+  transform: scale(1.05);
+}
+
+.delete-button:active {
+  transform: scale(0.95);
+}
+
+
+/* ============================= */
+/* EMPTY STATE */
+/* ============================= */
+
+.empty-state {
+  padding: 50px 20px;
+
+  text-align: center;
+
+  border: 1px dashed #34445c;
+  border-radius: 14px;
+
+  background: #172033;
+}
+
+.empty-state-icon {
+  display: block;
+
+  margin-bottom: 12px;
+
+  font-size: 36px;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px;
+
+  font-size: 17px;
+
+  color: #f8fafc;
+}
+
+.empty-state p {
+  margin: 0;
+
+  color: #94a3b8;
+
+  font-size: 14px;
+}
+
+
+/* ============================= */
+/* RESPONSIVE */
+/* ============================= */
+
 @media (max-width: 1000px) {
 
   .transaction-form {
@@ -100,6 +256,7 @@
   }
 
 }
+
 
 @media (max-width: 650px) {
 
@@ -109,17 +266,203 @@
 
   .transaction-card {
     align-items: flex-start;
+
     gap: 16px;
   }
 
   .transaction-meta {
     flex-direction: column;
+
+    align-items: flex-start;
+
     gap: 2px;
+  }
+
+  .transaction-date::before {
+    display: none;
   }
 
   .transaction-actions {
     flex-direction: column;
+
     align-items: flex-end;
+
+    gap: 8px;
+  }
+
+}
+
+/* =========================================
+   TRANSACTION FILTERS
+   ========================================= */
+
+.transaction-filters {
+
+  display: grid;
+
+  grid-template-columns:
+    2fr
+    1fr
+    1.2fr
+    1fr
+    1.5fr;
+
+  gap: 16px;
+
+  margin-bottom: 24px;
+
+  padding-bottom: 24px;
+
+  border-bottom: 1px solid #34445c;
+
+}
+
+
+/* =========================================
+   FILTER GROUP
+   ========================================= */
+
+.filter-group {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+
+}
+
+
+.filter-group label {
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  color: #94a3b8;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.04em;
+
+}
+
+
+/* =========================================
+   INPUTS / SELECTS
+   ========================================= */
+
+.filter-group input,
+.filter-group select {
+
+  width: 100%;
+
+  height: 40px;
+
+  box-sizing: border-box;
+
+  padding: 0 12px;
+
+  border: 1px solid #34445c;
+
+  border-radius: 8px;
+
+  background: #172033;
+
+  color: #e5e7eb;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+
+}
+
+
+/* =========================================
+   INPUT
+   ========================================= */
+
+.filter-group input::placeholder {
+
+  color: #64748b;
+
+}
+
+
+.filter-group input:focus,
+.filter-group select:focus {
+
+  border-color: #4b6385;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(75, 99, 133, 0.15);
+
+}
+
+
+/* =========================================
+   SELECT
+   ========================================= */
+
+.filter-group select {
+
+  cursor: pointer;
+
+}
+
+
+.filter-group select:hover {
+
+  border-color: #4b6385;
+
+}
+
+
+/* =========================================
+   SORT
+   ========================================= */
+
+.sort-filter select {
+
+  font-weight: 500;
+
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 1100px) {
+
+  .transaction-filters {
+
+    grid-template-columns:
+      1.5fr
+      1fr
+      1fr;
+
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  .transaction-filters {
+
+    grid-template-columns: 1fr;
+
+    gap: 14px;
+
   }
 
 }

@@ -1,14 +1,15 @@
 package finance_tracker_api.controller;
 
 import jakarta.validation.Valid;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import finance_tracker_api.dto.transaction.CreateTransactionRequest;
+import finance_tracker_api.dto.transaction.TransactionPageResponse;
 import finance_tracker_api.dto.transaction.TransactionResponse;
 import finance_tracker_api.service.TransactionService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -24,9 +25,13 @@ public class TransactionController {
     }
 
     @GetMapping
-    public List<TransactionResponse> findAll() {
+    public TransactionPageResponse findAll(
+            Pageable pageable
+    ) {
 
-        return transactionService.findAll();
+        return transactionService.findAll(
+                pageable
+        );
     }
 
     @PostMapping

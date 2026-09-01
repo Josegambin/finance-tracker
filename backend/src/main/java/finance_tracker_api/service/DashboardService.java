@@ -16,96 +16,114 @@ import java.util.List;
 @Service
 public class DashboardService {
 
-        private final TransactionRepository transactionRepository;
-        private final CurrentUserService currentUserService;
+    private final TransactionRepository transactionRepository;
+    private final CurrentUserService currentUserService;
 
-        public DashboardService(
-                        TransactionRepository transactionRepository,
-                        CurrentUserService currentUserService) {
-                this.transactionRepository = transactionRepository;
+    public DashboardService(
+            TransactionRepository transactionRepository,
+            CurrentUserService currentUserService) {
 
-                this.currentUserService = currentUserService;
-        }
+        this.transactionRepository =
+                transactionRepository;
 
-        public DashboardResponse getDashboard() {
+        this.currentUserService =
+                currentUserService;
+    }
 
-                User user = currentUserService.getCurrentUser();
+    public DashboardResponse getDashboard() {
 
-                List<Transaction> transactions = transactionRepository
-                                .findByUserIdOrderByDateDesc(
-                                                user.getId());
+        User user =
+                currentUserService.getCurrentUser();
 
-                BigDecimal totalIncome = transactions.stream()
+        List<Transaction> transactions =
+                transactionRepository
+                        .findByUserIdOrderByDateDesc(
+                                user.getId());
 
-                                .filter(transaction -> transaction.getType() == TransactionType.INCOME)
+        BigDecimal totalIncome =
+                transactions.stream()
 
-                                .map(Transaction::getAmount)
+                        .filter(transaction ->
+                                transaction.getType()
+                                        == TransactionType.INCOME)
 
-                                .reduce(
-                                                BigDecimal.ZERO,
-                                                BigDecimal::add);
+                        .map(Transaction::getAmount)
 
-                BigDecimal totalExpenses = transactions.stream()
+                        .reduce(
+                                BigDecimal.ZERO,
+                                BigDecimal::add);
 
-                                .filter(transaction -> transaction.getType() == TransactionType.EXPENSE)
+        BigDecimal totalExpenses =
+                transactions.stream()
 
-                                .map(Transaction::getAmount)
+                        .filter(transaction ->
+                                transaction.getType()
+                                        == TransactionType.EXPENSE)
 
-                                .reduce(
-                                                BigDecimal.ZERO,
-                                                BigDecimal::add);
+                        .map(Transaction::getAmount)
 
-                BigDecimal balance = totalIncome.subtract(
-                                totalExpenses);
+                        .reduce(
+                                BigDecimal.ZERO,
+                                BigDecimal::add);
 
-                List<TransactionResponse> recentTransactions = transactionRepository
-                                .findTop5ByUserIdOrderByDateDesc(
-                                                user.getId())
-                                .stream()
-                                .map(this::toTransactionResponse)
-                                .toList();
+        BigDecimal balance =
+                totalIncome.subtract(
+                        totalExpenses);
 
-                return new DashboardResponse(
+        List<TransactionResponse> recentTransactions =
+                transactionRepository
+                        .findTop5ByUserIdOrderByDateDesc(
+                                user.getId())
 
-                                balance,
+                        .stream()
 
-                                totalIncome,
+                        .map(this::toTransactionResponse)
 
-                                totalExpenses,
+                        .toList();
 
-                                recentTransactions);
-        }
+        return new DashboardResponse(
 
-        private TransactionResponse toTransactionResponse(
-                        Transaction transaction) {
+                balance,
 
-                return new TransactionResponse(
+                totalIncome,
 
-                                transaction.getId(),
+                totalExpenses,
 
-                                transaction.getDescription(),
+                recentTransactions);
+    }
 
-                                transaction.getAmount(),
+    private TransactionResponse toTransactionResponse(
+            Transaction transaction) {
 
-                                transaction.getDate(),
+        return new TransactionResponse(
 
-                                transaction.getType(),
+                transaction.getId(),
 
-                                transaction
-                                                .getCategory()
-                                                .getId(),
+                transaction.getDescription(),
 
-                                transaction
-                                                .getCategory()
-                                                .getName());
-        }
+                transaction.getAmount(),
 
-        public List<ExpenseByCategoryResponse> getExpensesByCategory() {
+                transaction.getDate(),
 
-                User user = currentUserService.getCurrentUser();
+                transaction.getType(),
 
-                return transactionRepository
-                                .findExpensesByCategory(
-                                                user.getId());
-        }
+                transaction
+                        .getCategory()
+                        .getId(),
+
+                transaction
+                        .getCategory()
+                        .getName());
+    }
+
+    public List<ExpenseByCategoryResponse>
+    getExpensesByCategory() {
+
+        User user =
+                currentUserService.getCurrentUser();
+
+        return transactionRepository
+                .findExpensesByCategory(
+                        user.getId());
+    }
 }

@@ -20,17 +20,17 @@ export default function TransactionList({
 
       <div className="empty-state">
 
-        <span>
+        <span className="empty-state-icon">
           💸
         </span>
 
         <h3>
-          No transactions yet
+          No transactions found
         </h3>
 
         <p>
-          Add your first income or expense
-          to start tracking your finances.
+          Try changing your filters or add
+          a new transaction.
         </p>
 
       </div>
@@ -66,7 +66,7 @@ export default function TransactionList({
 
               </div>
 
-              <div>
+              <div className="transaction-details">
 
                 <h3>
                   {transaction.description}
@@ -74,12 +74,21 @@ export default function TransactionList({
 
                 <div className="transaction-meta">
 
-                  <span>
+                  <span className="transaction-category">
                     {transaction.categoryName}
                   </span>
 
-                  <span>
-                    {transaction.date}
+                  <span className="transaction-date">
+                    {new Date(
+                      transaction.date
+                    ).toLocaleDateString(
+                      'es-ES',
+                      {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                      }
+                    )}
                   </span>
 
                 </div>
@@ -107,10 +116,13 @@ export default function TransactionList({
               </strong>
 
               <button
+                type="button"
                 className="delete-button"
                 onClick={() =>
                   onDelete(transaction.id)
                 }
+                aria-label={`Delete ${transaction.description}`}
+                title="Delete transaction"
               >
                 🗑
               </button>
@@ -123,5 +135,7 @@ export default function TransactionList({
       )}
 
     </div>
+
   );
+
 }
