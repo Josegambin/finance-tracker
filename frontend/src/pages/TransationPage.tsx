@@ -13,7 +13,8 @@ import {
   getCategories
 } from '../api/categoryApi';
 
-import Navbar from '../components/Navbar';
+import Navbar
+  from '../components/Navbar';
 
 import TransactionForm
   from '../components/TransactionForm';
@@ -34,7 +35,17 @@ import type {
   TransactionType
 } from '../types/transaction';
 
+import {
+  useTranslation
+} from 'react-i18next';
+
+
 export default function TransactionsPage() {
+
+  const {
+    t
+  } = useTranslation();
+
 
   const [transactions, setTransactions] =
     useState<Transaction[]>([]);
@@ -72,7 +83,7 @@ export default function TransactionsPage() {
     useState<number | 'ALL'>('ALL');
 
   const [sort, setSort] =
-  useState('date,desc');
+    useState('date,desc');
 
 
   /*
@@ -89,7 +100,7 @@ export default function TransactionsPage() {
 
     setCategoryFilter('ALL');
 
-    setMonthFilter('');
+    setMonthFilter('ALL');
 
     setSort('date,desc');
 
@@ -119,7 +130,8 @@ export default function TransactionsPage() {
 
         getTransactions(
           currentPage,
-          5, sort
+          5,
+          sort
         ),
 
         getCategories()
@@ -163,7 +175,7 @@ export default function TransactionsPage() {
 
   /*
    * ============================
-   * LOAD WHEN PAGE CHANGES
+   * LOAD WHEN PAGE OR SORT CHANGES
    * ============================
    */
 
@@ -189,11 +201,6 @@ export default function TransactionsPage() {
       await createTransaction(
         transaction
       );
-
-      /*
-       * Volvemos a la primera página
-       * para mostrar la nueva transacción.
-       */
 
       setCurrentPage(0);
 
@@ -225,11 +232,6 @@ export default function TransactionsPage() {
     try {
 
       await deleteTransaction(id);
-
-      /*
-       * Recargamos la página actual
-       * después de eliminar.
-       */
 
       await loadData();
 
@@ -335,7 +337,7 @@ export default function TransactionsPage() {
         const matchesCategory =
           categoryFilter === 'ALL' ||
           transaction.categoryId ===
-            categoryFilter;
+          categoryFilter;
 
 
         const matchesMonth =
@@ -376,7 +378,7 @@ export default function TransactionsPage() {
         <main className="page-container">
 
           <p>
-            Loading transactions...
+            {t('transactions.loading')}
           </p>
 
         </main>
@@ -388,12 +390,6 @@ export default function TransactionsPage() {
   }
 
 
-  /*
-   * ============================
-   * PAGE
-   * ============================
-   */
-
   return (
 
     <>
@@ -403,30 +399,38 @@ export default function TransactionsPage() {
       <main className="page-container">
 
 
-        {/* HEADER */}
-
         <div className="page-header">
 
           <div>
 
             <p className="eyebrow">
-              FINANCE MANAGEMENT
+
+              {t(
+                'transactions.financeManagement'
+              )}
+
             </p>
 
             <h1>
-              Transactions
+
+              {t(
+                'transactions.title'
+              )}
+
             </h1>
 
             <p className="page-description">
-              Track your income and expenses.
+
+              {t(
+                'transactions.description'
+              )}
+
             </p>
 
           </div>
 
         </div>
 
-
-        {/* ERROR */}
 
         {error && (
 
@@ -439,132 +443,209 @@ export default function TransactionsPage() {
         )}
 
 
-        {/* CREATE TRANSACTION */}
-
         <section className="content-card">
 
           <h2>
-            Add transaction
+
+            {t(
+              'transactions.addTransaction'
+            )}
+
           </h2>
 
           <TransactionForm
-            categories={categories}
-            onCreate={handleCreate}
+
+            categories={
+              categories
+            }
+
+            onCreate={
+              handleCreate
+            }
+
           />
 
         </section>
 
 
-        {/* TRANSACTIONS */}
-
         <section className="content-card">
 
 
-          {/* FILTERS */}
-
-          
-
           <TransactionFilters
 
-  search={search}
+            search={
+              search
+            }
 
-  type={typeFilter}
+            type={
+              typeFilter
+            }
 
-  categoryId={categoryFilter}
+            categoryId={
+              categoryFilter
+            }
 
-  month={monthFilter}
+            month={
+              monthFilter
+            }
 
-  sort={sort}
+            sort={
+              sort
+            }
 
-  categories={categories}
+            categories={
+              categories
+            }
 
-  months={availableMonths}
+            months={
+              availableMonths
+            }
 
-  onSearchChange={setSearch}
+            onSearchChange={
+              setSearch
+            }
 
-  onTypeChange={setTypeFilter}
+            onTypeChange={
+              setTypeFilter
+            }
 
-  onCategoryChange={
-    setCategoryFilter
-  }
+            onCategoryChange={
+              setCategoryFilter
+            }
 
-  onMonthChange={
-    setMonthFilter
-  }
+            onMonthChange={
+              setMonthFilter
+            }
 
-  onSortChange={
-    (value) => {
+            onSortChange={
 
-      setSort(value);
+              (value) => {
 
-      setCurrentPage(0);
+                setSort(value);
 
-    }
-  }
+                setCurrentPage(0);
 
-/>
+              }
 
-          {/* SECTION HEADER */}
+            }
+
+          />
+
 
           <div className="section-header">
 
             <div>
 
               <h2>
-                Your transactions
+
+                {t(
+                  'transactions.yourTransactions'
+                )}
+
               </h2>
 
               <p>
-                {totalElements} transactions
+
+                {t(
+                  'transactions.transactionsCount',
+                  {
+                    count:
+                      totalElements
+                  }
+                )}
+
               </p>
 
             </div>
 
 
             <button
+
               type="button"
-              onClick={clearFilters}
+
+              onClick={
+                clearFilters
+              }
+
             >
-              Clear filters
+
+              {t(
+                'transactions.clearFilters'
+              )}
+
             </button>
 
           </div>
 
 
-      
           {totalPages > 1 && (
 
             <div className="pagination">
 
               <button
+
                 type="button"
+
                 onClick={
                   goToPreviousPage
                 }
+
                 disabled={
                   currentPage === 0
                 }
+
               >
-                ← Previous
+
+                ← {t(
+                  'transactions.previous'
+                )}
+
               </button>
 
 
               <span>
-                Page {currentPage + 1} of {totalPages}
+
+                {t(
+                  'transactions.page'
+                )}
+
+                {' '}
+
+                {currentPage + 1}
+
+                {' '}
+
+                {t(
+                  'transactions.of'
+                )}
+
+                {' '}
+
+                {totalPages}
+
               </span>
 
 
               <button
+
                 type="button"
+
                 onClick={
                   goToNextPage
                 }
+
                 disabled={
                   currentPage ===
                   totalPages - 1
                 }
+
               >
-                Next →
+
+                {t(
+                  'transactions.next'
+                )}
+
+                {' '}→
 
               </button>
 
@@ -590,7 +671,6 @@ export default function TransactionsPage() {
       </main>
 
     </>
-
   );
 
 }
