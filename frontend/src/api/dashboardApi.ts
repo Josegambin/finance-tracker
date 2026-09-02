@@ -1,63 +1,43 @@
-import type { Dashboard } from '../types/dashboard';
+import type { Dashboard } from "../types/dashboard";
 
-const API_URL = 'http://localhost:8080/api';
+const API_URL = "http://localhost:8080/api";
 
 function getHeaders(): HeadersInit {
-
-  const token =
-    localStorage.getItem(
-      'finance_tracker_token'
-    );
+  const token = localStorage.getItem("finance_tracker_token");
 
   return {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
   };
 }
 
-export async function getDashboard():
-  Promise<Dashboard> {
-
-  const response =
-    await fetch(
-      `${API_URL}/dashboard`,
-      {
-        headers: getHeaders()
-      }
-    );
+export async function getDashboard(month: string): Promise<Dashboard> {
+  const response = await fetch(`${API_URL}/dashboard?month=${month}`, {
+    headers: getHeaders(),
+  });
 
   if (!response.ok) {
-
-    throw new Error(
-      'Error loading dashboard'
-    );
+    throw new Error("Error loading dashboard");
   }
 
   return response.json();
 }
 
 export interface ExpenseByCategory {
-  name: string;
-  amount: number;
+  categoryName: string;
+  total: number;
 }
 
-export async function
-getExpensesByCategory():
-  Promise<ExpenseByCategory[]> {
-
-  const response =
-    await fetch(
-      `${API_URL}/dashboard/expenses-by-category`,
-      {
-        headers: getHeaders()
-      }
-    );
+export async function getExpensesByCategory(month: string) {
+  const response = await fetch(
+    `${API_URL}/dashboard/expenses-by-category?month=${month}`,
+    {
+      headers: getHeaders(),
+    },
+  );
 
   if (!response.ok) {
-
-    throw new Error(
-      'Error loading expenses by category'
-    );
+    throw new Error("Error loading expenses by category");
   }
 
   return response.json();

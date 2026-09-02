@@ -15,6 +15,11 @@ public interface BudgetRepository
             Long userId
     );
 
+    List<Budget> findByUserIdAndMonthOrderByCategoryNameAsc(
+            Long userId,
+            YearMonth month
+    );
+
     Optional<Budget>
     findByUserIdAndCategoryIdAndMonth(
             Long userId,

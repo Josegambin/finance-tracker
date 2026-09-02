@@ -7,7 +7,7 @@ import {
 
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
+import Dashboard from './pages/DashboardPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import CategoriesPage from './pages/CategoriesPage';
 import type { Category } from './types/category';

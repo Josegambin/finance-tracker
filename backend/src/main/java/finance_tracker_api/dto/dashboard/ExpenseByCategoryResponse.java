@@ -3,7 +3,7 @@ package finance_tracker_api.dto.dashboard;
 import java.math.BigDecimal;
 
 public record ExpenseByCategoryResponse(
-        String name,
-        BigDecimal amount
+        String categoryName,
+        BigDecimal total
 ) {
 }

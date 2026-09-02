@@ -18,6 +18,7 @@ function getHeaders(): HeadersInit {
   };
 }
 
+
 export async function getBudgets():
   Promise<Budget[]> {
 
@@ -82,3 +83,24 @@ export async function deleteBudget(
     );
   }
 }
+
+export async function getBudgetsByMonth(
+  month: string
+): Promise<Budget[]> {
+
+  const response = await fetch(
+    `${API_URL}/budgets/by-month?month=${month}`,
+    {
+      headers: getHeaders()
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      'Error loading budgets'
+    );
+  }
+
+  return response.json();
+}
+

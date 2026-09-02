@@ -8,8 +8,8 @@ import {
 } from 'recharts';
 
 interface ExpenseCategory {
-    name: string;
-    amount: number;
+    categoryName: string;
+    total: number;
 }
 
 interface ExpensesByCategoryChartProps {
@@ -33,6 +33,19 @@ export default function ExpensesByCategoryChart({
         );
     }
 
+    const formatCurrency = (
+        value: number
+    ) => {
+
+        return new Intl.NumberFormat(
+            'es-ES',
+            {
+                style: 'currency',
+                currency: 'EUR'
+            }
+        ).format(value);
+    };
+
     return (
 
         <div className="chart-container">
@@ -46,10 +59,10 @@ export default function ExpensesByCategoryChart({
 
                     <Pie
                         data={data}
-                        dataKey="amount"
-                        nameKey="name"
+                        dataKey="total"
+                        nameKey="categoryName"
                         cx="50%"
-                        cy="50%"
+                        cy="45%"
                         outerRadius={100}
                         innerRadius={55}
                         paddingAngle={3}
@@ -67,7 +80,13 @@ export default function ExpensesByCategoryChart({
 
                     </Pie>
 
-                    <Tooltip />
+                    <Tooltip
+                        formatter={(value) =>
+                            formatCurrency(
+                                Number(value)
+                            )
+                        }
+                    />
 
                     <Legend />
 

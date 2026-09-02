@@ -5,21 +5,21 @@ import java.time.YearMonth;
 
 public record BudgetResponse(
 
-        Long id,
+                Long id,
 
-        Long categoryId,
+                Long categoryId,
 
-        String categoryName,
+                String categoryName,
 
-        YearMonth month,
+                YearMonth month,
 
-        BigDecimal budgetAmount,
+                BigDecimal budgetAmount,
 
-        BigDecimal spentAmount,
+                BigDecimal spentAmount,
 
-        BigDecimal remainingAmount,
+                BigDecimal remainingAmount,
 
-        BigDecimal percentageUsed
+                BigDecimal percentageUsed
 
 ) {
 }

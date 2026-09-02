@@ -8,6 +8,7 @@ import finance_tracker_api.dto.budget.BudgetResponse;
 import finance_tracker_api.dto.budget.CreateBudgetRequest;
 import finance_tracker_api.service.BudgetService;
 
+import java.time.YearMonth;
 import java.util.List;
 
 @RestController
@@ -17,23 +18,17 @@ public class BudgetController {
     private final BudgetService budgetService;
 
     public BudgetController(
-            BudgetService budgetService
-    ) {
-        this.budgetService =
-                budgetService;
+            BudgetService budgetService) {
+        this.budgetService = budgetService;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BudgetResponse createBudget(
-            @Valid
-            @RequestBody
-            CreateBudgetRequest request
-    ) {
+            @Valid @RequestBody CreateBudgetRequest request) {
 
         return budgetService.createBudget(
-                request
-        );
+                request);
     }
 
     @GetMapping
@@ -45,9 +40,15 @@ public class BudgetController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBudget(
-            @PathVariable Long id
-    ) {
+            @PathVariable Long id) {
 
         budgetService.deleteBudget(id);
+    }
+
+    @GetMapping("/by-month")
+    public List<BudgetResponse> getBudgetsByMonth(
+            @RequestParam YearMonth month) {
+
+        return budgetService.getBudgets(month);
     }
 }

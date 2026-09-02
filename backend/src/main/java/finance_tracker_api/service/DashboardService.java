@@ -11,6 +11,8 @@ import finance_tracker_api.entity.User;
 import finance_tracker_api.repository.TransactionRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 @Service
@@ -28,13 +30,18 @@ public class DashboardService {
                 this.currentUserService = currentUserService;
         }
 
-        public DashboardResponse getDashboard() {
+        public DashboardResponse getDashboard(YearMonth month) {
 
                 User user = currentUserService.getCurrentUser();
 
+                LocalDate startDate = month.atDay(1);
+                LocalDate endDate = month.plusMonths(1).atDay(1);
+
                 List<Transaction> transactions = transactionRepository
-                                .findByUserIdOrderByDateDesc(
-                                                user.getId());
+                                .findByUserIdAndDateGreaterThanEqualAndDateLessThanOrderByDateDesc(
+                                                user.getId(),
+                                                startDate,
+                                                endDate);
 
                 BigDecimal totalIncome = transactions.stream()
 
@@ -60,13 +67,12 @@ public class DashboardService {
                                 totalExpenses);
 
                 List<TransactionResponse> recentTransactions = transactionRepository
-                                .findTop5ByUserIdOrderByDateDesc(
-                                                user.getId())
-
+                                .findTop5ByUserIdAndDateGreaterThanEqualAndDateLessThanOrderByDateDesc(
+                                                user.getId(),
+                                                startDate,
+                                                endDate)
                                 .stream()
-
                                 .map(this::toTransactionResponse)
-
                                 .toList();
 
                 return new DashboardResponse(
@@ -104,12 +110,17 @@ public class DashboardService {
                                                 .getName());
         }
 
-        public List<ExpenseByCategoryResponse> getExpensesByCategory() {
+        public List<ExpenseByCategoryResponse> getExpensesByCategory(YearMonth month) {
 
                 User user = currentUserService.getCurrentUser();
 
+                LocalDate startDate = month.atDay(1);
+                LocalDate endDate = month.plusMonths(1).atDay(1);
+
                 return transactionRepository
                                 .findExpensesByCategory(
-                                                user.getId());
+                                                user.getId(),
+                                                startDate,
+                                                endDate);
         }
 }

@@ -1,6 +1,6 @@
 interface DashboardCardProps {
   title: string;
-  value: number;
+  value: string;
   icon: string;
   type: 'balance' | 'income' | 'expense';
 }
@@ -11,15 +11,6 @@ export default function DashboardCard({
   icon,
   type
 }: DashboardCardProps) {
-
-  const formattedValue =
-    new Intl.NumberFormat(
-      'es-ES',
-      {
-        style: 'currency',
-        currency: 'EUR'
-      }
-    ).format(value);
 
   return (
     <div
@@ -39,7 +30,7 @@ export default function DashboardCard({
       </div>
 
       <strong className="dashboard-card-value">
-        {formattedValue}
+        {value}
       </strong>
 
     </div>
