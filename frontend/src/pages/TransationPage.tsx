@@ -6,7 +6,8 @@ import {
 import {
   createTransaction,
   deleteTransaction,
-  getTransactions
+  getTransactions,
+  exportTransactionsCsv
 } from '../api/transactionApi';
 
 import {
@@ -84,6 +85,9 @@ export default function TransactionsPage() {
 
   const [sort, setSort] =
     useState('date,desc');
+
+  const [exporting, setExporting] =
+    useState(false);
 
 
   /*
@@ -244,6 +248,101 @@ export default function TransactionsPage() {
           : 'Error deleting transaction'
 
       );
+
+    }
+
+  };
+
+
+  /*
+   * ============================
+   * EXPORT CSV
+   * ============================
+   */
+
+
+  const handleExportCsv = async () => {
+
+    try {
+
+      setExporting(true);
+
+      setError(null);
+
+
+      const blob =
+        await exportTransactionsCsv(
+
+          search,
+
+          typeFilter,
+
+          categoryFilter === 'ALL'
+            ? undefined
+            : categoryFilter,
+
+          monthFilter
+
+        );
+
+
+      const url =
+        window.URL.createObjectURL(
+          blob
+        );
+
+
+      const link =
+        document.createElement(
+          'a'
+        );
+
+
+      link.href = url;
+
+
+      const today =
+        new Date()
+          .toISOString()
+          .substring(
+            0,
+            10
+          );
+
+
+      link.download =
+        `transactions-${today}.csv`;
+
+
+      document.body.appendChild(
+        link
+      );
+
+
+      link.click();
+
+
+      link.remove();
+
+
+      window.URL.revokeObjectURL(
+        url
+      );
+
+
+    } catch (error) {
+
+      setError(
+
+        error instanceof Error
+          ? error.message
+          : 'Error exporting transactions'
+
+      );
+
+    } finally {
+
+      setExporting(false);
 
     }
 
@@ -559,21 +658,47 @@ export default function TransactionsPage() {
             </div>
 
 
-            <button
+            <div>
 
-              type="button"
+              <button
 
-              onClick={
-                clearFilters
-              }
+                type="button"
 
-            >
+                onClick={
+                  handleExportCsv
+                }
 
-              {t(
-                'transactions.clearFilters'
-              )}
+                disabled={
+                  exporting
+                }
 
-            </button>
+              >
+
+                {exporting
+                  ? `⏳ ${t('transactions.exporting')}`
+                  : `📥 ${t('transactions.exportCsv')}`
+                }
+
+              </button>
+
+
+              <button
+
+                type="button"
+
+                onClick={
+                  clearFilters
+                }
+
+              >
+
+                {t(
+                  'transactions.clearFilters'
+                )}
+
+              </button>
+
+            </div>
 
           </div>
 
@@ -671,6 +796,6 @@ export default function TransactionsPage() {
       </main>
 
     </>
-  );
 
+  );
 }

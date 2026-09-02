@@ -6,6 +6,11 @@ import type {
   TransactionType
 } from '../types/transaction';
 
+import {
+  useTranslation
+} from 'react-i18next';
+
+
 interface TransactionFiltersProps {
 
   search: string;
@@ -44,6 +49,7 @@ interface TransactionFiltersProps {
 
 }
 
+
 export default function TransactionFilters({
 
   search,
@@ -63,28 +69,48 @@ export default function TransactionFilters({
 
 }: TransactionFiltersProps) {
 
+  const {
+    t
+  } = useTranslation();
+
+
   return (
 
     <div className="transaction-filters">
+
 
       {/* SEARCH */}
 
       <div className="filter-group search-filter">
 
         <label htmlFor="transaction-search">
-          Search
+
+          {t(
+            'transactions.search'
+          )}
+
         </label>
 
         <input
+
           id="transaction-search"
+
           type="text"
-          placeholder="Search transactions..."
+
+          placeholder={
+            t(
+              'transactions.searchPlaceholder'
+            )
+          }
+
           value={search}
+
           onChange={(event) =>
             onSearchChange(
               event.target.value
             )
           }
+
         />
 
       </div>
@@ -95,30 +121,56 @@ export default function TransactionFilters({
       <div className="filter-group">
 
         <label htmlFor="transaction-type">
-          Type
+
+          {t(
+            'transactions.type'
+          )}
+
         </label>
 
         <select
+
           id="transaction-type"
+
           value={type}
-          onChange={(event) =>
+
+          onChange={(event) => {
+
             onTypeChange(
+
               event.target.value as
-              TransactionType | 'ALL'
-            )
-          }
+                TransactionType | 'ALL'
+
+            );
+
+          }}
+
         >
 
           <option value="ALL">
-            All types
+
+            {t(
+              'transactions.allTypes'
+            )}
+
           </option>
+
 
           <option value="INCOME">
-            Income
+
+            {t(
+              'transactions.income'
+            )}
+
           </option>
 
+
           <option value="EXPENSE">
-            Expense
+
+            {t(
+              'transactions.expense'
+            )}
+
           </option>
 
         </select>
@@ -131,38 +183,63 @@ export default function TransactionFilters({
       <div className="filter-group">
 
         <label htmlFor="transaction-category">
-          Category
+
+          {t(
+            'transactions.category'
+          )}
+
         </label>
 
+
         <select
+
           id="transaction-category"
+
           value={categoryId}
+
           onChange={(event) => {
 
             const value =
               event.target.value;
 
             onCategoryChange(
+
               value === 'ALL'
                 ? 'ALL'
                 : Number(value)
+
             );
 
           }}
+
         >
 
           <option value="ALL">
-            All categories
+
+            {t(
+              'transactions.allCategories'
+            )}
+
           </option>
+
 
           {categories.map(
             category => (
 
               <option
-                key={category.id}
-                value={category.id}
+
+                key={
+                  category.id
+                }
+
+                value={
+                  category.id
+                }
+
               >
+
                 {category.name}
+
               </option>
 
             )
@@ -178,31 +255,54 @@ export default function TransactionFilters({
       <div className="filter-group">
 
         <label htmlFor="transaction-month">
-          Month
+
+          {t(
+            'transactions.month'
+          )}
+
         </label>
 
+
         <select
+
           id="transaction-month"
+
           value={month}
+
           onChange={(event) =>
             onMonthChange(
               event.target.value
             )
           }
+
         >
 
           <option value="ALL">
-            All months
+
+            {t(
+              'transactions.allMonths'
+            )}
+
           </option>
+
 
           {months.map(
             currentMonth => (
 
               <option
-                key={currentMonth}
-                value={currentMonth}
+
+                key={
+                  currentMonth
+                }
+
+                value={
+                  currentMonth
+                }
+
               >
+
                 {currentMonth}
+
               </option>
 
             )
@@ -218,12 +318,20 @@ export default function TransactionFilters({
       <div className="filter-group sort-filter">
 
         <label htmlFor="transaction-sort">
-          Sort by
+
+          {t(
+            'transactions.sortBy'
+          )}
+
         </label>
 
+
         <select
+
           id="transaction-sort"
+
           value={sort}
+
           onChange={(event) => {
 
             onSortChange(
@@ -231,30 +339,60 @@ export default function TransactionFilters({
             );
 
           }}
+
         >
 
           <option value="date,desc">
-            Date — Newest first
+
+            {t(
+              'transactions.newestFirst'
+            )}
+
           </option>
+
 
           <option value="date,asc">
-            Date — Oldest first
+
+            {t(
+              'transactions.oldestFirst'
+            )}
+
           </option>
+
 
           <option value="amount,desc">
-            Amount — Highest first
+
+            {t(
+              'transactions.highestAmount'
+            )}
+
           </option>
+
 
           <option value="amount,asc">
-            Amount — Lowest first
+
+            {t(
+              'transactions.lowestAmount'
+            )}
+
           </option>
+
 
           <option value="description,asc">
-            Description — A → Z
+
+            {t(
+              'transactions.descriptionAZ'
+            )}
+
           </option>
 
+
           <option value="description,desc">
-            Description — Z → A
+
+            {t(
+              'transactions.descriptionZA'
+            )}
+
           </option>
 
         </select>
@@ -266,3 +404,4 @@ export default function TransactionFilters({
   );
 
 }
+

@@ -105,3 +105,121 @@ export async function deleteTransaction(
   }
 
 }
+
+/*
+ * ============================
+ * EXPORT CSV
+ * ============================
+ */
+
+export async function exportTransactionsCsv(
+  search?: string,
+  type?: string,
+  categoryId?: number,
+  month?: string
+): Promise<Blob> {
+
+  const params =
+    new URLSearchParams();
+
+
+  /*
+   * Search
+   */
+
+  if (
+    search &&
+    search.trim() !== ''
+  ) {
+
+    params.append(
+      'search',
+      search
+    );
+
+  }
+
+
+  /*
+   * Type
+   */
+
+  if (
+    type &&
+    type !== 'ALL'
+  ) {
+
+    params.append(
+      'type',
+      type
+    );
+
+  }
+
+
+  /*
+   * Category
+   */
+
+  if (
+    categoryId !== undefined &&
+    categoryId !== null &&
+    categoryId !== -1
+  ) {
+
+    params.append(
+      'categoryId',
+      categoryId.toString()
+    );
+
+  }
+
+
+  /*
+   * Month
+   */
+
+  if (
+    month &&
+    month !== 'ALL'
+  ) {
+
+    params.append(
+      'month',
+      month
+    );
+
+  }
+
+
+  const query =
+    params.toString();
+
+
+  const url =
+    query.length > 0
+      ? `${API_URL}/transactions/export/csv?${query}`
+      : `${API_URL}/transactions/export/csv`;
+
+
+  const response =
+    await fetch(
+      url,
+      {
+        headers: getHeaders()
+      }
+    );
+
+
+  if (!response.ok) {
+
+    throw new Error(
+      'Error exporting transactions'
+    );
+
+  }
+
+
+  return response.blob();
+
+}
