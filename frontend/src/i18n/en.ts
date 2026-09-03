@@ -186,8 +186,29 @@ const en = {
       recentTransactions:
         'Recent transactions',
 
+      recentTransactionsDescription:
+        'Your latest financial activity.',
+
       expensesByCategory:
-        'Expenses by category'
+        'Expenses by category',
+
+      expensesByCategoryDescription:
+        'Where your money is going.',
+
+      budgetVsSpent:
+        'Budget vs spent',
+
+      budgetVsSpentDescription:
+        'Compare your budget with your actual spending.',
+
+      eyebrow:
+        'FINANCE OVERVIEW',
+
+      month:
+        'Month',
+
+      loadError:
+        'Error loading dashboard'
 
     },
 

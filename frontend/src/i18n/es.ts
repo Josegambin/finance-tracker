@@ -186,8 +186,29 @@ const es = {
       recentTransactions:
         'Transacciones recientes',
 
+      recentTransactionsDescription:
+        'Tu actividad financiera más reciente.',
+
       expensesByCategory:
-        'Gastos por categoría'
+        'Gastos por categoría',
+
+      expensesByCategoryDescription:
+        'En qué se va tu dinero.',
+
+      budgetVsSpent:
+        'Presupuesto vs gastado',
+
+      budgetVsSpentDescription:
+        'Compara tu presupuesto con el gasto real.',
+
+      eyebrow:
+        'RESUMEN FINANCIERO',
+
+      month:
+        'Mes',
+
+      loadError:
+        'Error al cargar el panel'
 
     },
 

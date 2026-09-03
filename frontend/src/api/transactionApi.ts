@@ -1,8 +1,21 @@
 import type {
   Transaction,
   CreateTransactionRequest,
-  TransactionPageResponse
+  TransactionPageResponse,
+  TransactionType
 } from '../types/transaction';
+
+export interface TransactionFilters {
+
+  search?: string;
+
+  type?: TransactionType | 'ALL';
+
+  categoryId?: number | 'ALL';
+
+  month?: string;
+
+}
 
 const API_URL =
   'http://localhost:8080/api';
@@ -24,15 +37,98 @@ function getHeaders(): HeadersInit {
 
 }
 
+function buildFilterParams(
+  filters: TransactionFilters
+): URLSearchParams {
+
+  const params =
+    new URLSearchParams();
+
+
+  if (
+    filters.search &&
+    filters.search.trim() !== ''
+  ) {
+
+    params.append(
+      'search',
+      filters.search.trim()
+    );
+
+  }
+
+
+  if (
+    filters.type &&
+    filters.type !== 'ALL'
+  ) {
+
+    params.append(
+      'type',
+      filters.type
+    );
+
+  }
+
+
+  if (
+    filters.categoryId !== undefined &&
+    filters.categoryId !== 'ALL'
+  ) {
+
+    params.append(
+      'categoryId',
+      filters.categoryId.toString()
+    );
+
+  }
+
+
+  if (
+    filters.month &&
+    filters.month !== 'ALL'
+  ) {
+
+    params.append(
+      'month',
+      filters.month
+    );
+
+  }
+
+
+  return params;
+
+}
+
 export async function getTransactions(
   page: number = 0,
   size: number = 5,
-  sort: string = 'date,desc'
+  sort: string = 'date,desc',
+  filters: TransactionFilters = {}
 ): Promise<TransactionPageResponse> {
+
+  const params =
+    buildFilterParams(filters);
+
+  params.append(
+    'page',
+    page.toString()
+  );
+
+  params.append(
+    'size',
+    size.toString()
+  );
+
+  params.append(
+    'sort',
+    sort
+  );
 
   const response =
     await fetch(
-      `${API_URL}/transactions?page=${page}&size=${size}&sort=${sort}`,
+      `${API_URL}/transactions?${params.toString()}`,
       {
         headers: getHeaders()
       }
@@ -113,87 +209,12 @@ export async function deleteTransaction(
  */
 
 export async function exportTransactionsCsv(
-  search?: string,
-  type?: string,
-  categoryId?: number,
-  month?: string
+  filters: TransactionFilters = {}
 ): Promise<Blob> {
 
-  const params =
-    new URLSearchParams();
-
-
-  /*
-   * Search
-   */
-
-  if (
-    search &&
-    search.trim() !== ''
-  ) {
-
-    params.append(
-      'search',
-      search
-    );
-
-  }
-
-
-  /*
-   * Type
-   */
-
-  if (
-    type &&
-    type !== 'ALL'
-  ) {
-
-    params.append(
-      'type',
-      type
-    );
-
-  }
-
-
-  /*
-   * Category
-   */
-
-  if (
-    categoryId !== undefined &&
-    categoryId !== null &&
-    categoryId !== -1
-  ) {
-
-    params.append(
-      'categoryId',
-      categoryId.toString()
-    );
-
-  }
-
-
-  /*
-   * Month
-   */
-
-  if (
-    month &&
-    month !== 'ALL'
-  ) {
-
-    params.append(
-      'month',
-      month
-    );
-
-  }
-
-
   const query =
-    params.toString();
+    buildFilterParams(filters)
+      .toString();
 
 
   const url =

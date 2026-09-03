@@ -40,6 +40,10 @@ import {
   useTranslation
 } from 'react-i18next';
 
+import {
+  getRecentMonths
+} from '../utils/months';
+
 
 export default function TransactionsPage() {
 
@@ -66,6 +70,9 @@ export default function TransactionsPage() {
   const [loading, setLoading] =
     useState(true);
 
+  const [initialLoading, setInitialLoading] =
+    useState(true);
+
   const [error, setError] =
     useState<string | null>(null);
 
@@ -85,6 +92,9 @@ export default function TransactionsPage() {
 
   const [sort, setSort] =
     useState('date,desc');
+
+  const [appliedSearch, setAppliedSearch] =
+    useState('');
 
   const [exporting, setExporting] =
     useState(false);
@@ -135,7 +145,13 @@ export default function TransactionsPage() {
         getTransactions(
           currentPage,
           5,
-          sort
+          sort,
+          {
+            search: appliedSearch,
+            type: typeFilter,
+            categoryId: categoryFilter,
+            month: monthFilter
+          }
         ),
 
         getCategories()
@@ -172,6 +188,8 @@ export default function TransactionsPage() {
 
       setLoading(false);
 
+      setInitialLoading(false);
+
     }
 
   };
@@ -179,7 +197,31 @@ export default function TransactionsPage() {
 
   /*
    * ============================
-   * LOAD WHEN PAGE OR SORT CHANGES
+   * DEBOUNCE SEARCH
+   * ============================
+   */
+
+  useEffect(() => {
+
+    const timeout = setTimeout(
+      () => {
+
+        setAppliedSearch(search);
+
+        setCurrentPage(0);
+
+      },
+      300
+    );
+
+    return () => clearTimeout(timeout);
+
+  }, [search]);
+
+
+  /*
+   * ============================
+   * LOAD WHEN PAGE, SORT OR FILTERS CHANGE
    * ============================
    */
 
@@ -187,7 +229,14 @@ export default function TransactionsPage() {
 
     loadData();
 
-  }, [currentPage, sort]);
+  }, [
+    currentPage,
+    sort,
+    appliedSearch,
+    typeFilter,
+    categoryFilter,
+    monthFilter
+  ]);
 
 
   /*
@@ -206,7 +255,15 @@ export default function TransactionsPage() {
         transaction
       );
 
-      setCurrentPage(0);
+      if (currentPage === 0) {
+
+        await loadData();
+
+      } else {
+
+        setCurrentPage(0);
+
+      }
 
     } catch (error) {
 
@@ -271,19 +328,17 @@ export default function TransactionsPage() {
 
 
       const blob =
-        await exportTransactionsCsv(
+        await exportTransactionsCsv({
 
-          search,
+          search: appliedSearch,
 
-          typeFilter,
+          type: typeFilter,
 
-          categoryFilter === 'ALL'
-            ? undefined
-            : categoryFilter,
+          categoryId: categoryFilter,
 
-          monthFilter
+          month: monthFilter
 
-        );
+        });
 
 
       const url =
@@ -391,73 +446,7 @@ export default function TransactionsPage() {
    */
 
   const availableMonths =
-    Array.from(
-
-      new Set(
-
-        transactions.map(
-          transaction =>
-            transaction.date.substring(
-              0,
-              7
-            )
-        )
-
-      )
-
-    )
-      .sort()
-      .reverse();
-
-
-  /*
-   * ============================
-   * FRONTEND FILTERS
-   * ============================
-   */
-
-  const filteredTransactions =
-    transactions.filter(
-      transaction => {
-
-        const matchesSearch =
-          transaction.description
-            .toLowerCase()
-            .includes(
-              search.toLowerCase()
-            );
-
-
-        const matchesType =
-          typeFilter === 'ALL' ||
-          transaction.type === typeFilter;
-
-
-        const matchesCategory =
-          categoryFilter === 'ALL' ||
-          transaction.categoryId ===
-          categoryFilter;
-
-
-        const matchesMonth =
-          monthFilter === 'ALL' ||
-          transaction.date.substring(
-            0,
-            7
-          ) === monthFilter;
-
-
-        return (
-
-          matchesSearch &&
-          matchesType &&
-          matchesCategory &&
-          matchesMonth
-
-        );
-
-      }
-    );
+    getRecentMonths();
 
 
   /*
@@ -466,7 +455,7 @@ export default function TransactionsPage() {
    * ============================
    */
 
-  if (loading) {
+  if (initialLoading) {
 
     return (
 
@@ -605,15 +594,39 @@ export default function TransactionsPage() {
             }
 
             onTypeChange={
-              setTypeFilter
+
+              (value) => {
+
+                setTypeFilter(value);
+
+                setCurrentPage(0);
+
+              }
+
             }
 
             onCategoryChange={
-              setCategoryFilter
+
+              (value) => {
+
+                setCategoryFilter(value);
+
+                setCurrentPage(0);
+
+              }
+
             }
 
             onMonthChange={
-              setMonthFilter
+
+              (value) => {
+
+                setMonthFilter(value);
+
+                setCurrentPage(0);
+
+              }
+
             }
 
             onSortChange={
@@ -779,10 +792,19 @@ export default function TransactionsPage() {
           )}
 
 
+          {loading && (
+
+            <p>
+              {t('transactions.loading')}
+            </p>
+
+          )}
+
+
           <TransactionList
 
             transactions={
-              filteredTransactions
+              transactions
             }
 
             onDelete={

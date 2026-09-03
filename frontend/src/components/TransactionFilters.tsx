@@ -10,6 +10,10 @@ import {
   useTranslation
 } from 'react-i18next';
 
+import {
+  formatMonth
+} from '../utils/months';
+
 
 interface TransactionFiltersProps {
 
@@ -70,7 +74,8 @@ export default function TransactionFilters({
 }: TransactionFiltersProps) {
 
   const {
-    t
+    t,
+    i18n
   } = useTranslation();
 
 
@@ -301,7 +306,10 @@ export default function TransactionFilters({
 
               >
 
-                {currentMonth}
+                {formatMonth(
+                  currentMonth,
+                  i18n.language
+                )}
 
               </option>
 

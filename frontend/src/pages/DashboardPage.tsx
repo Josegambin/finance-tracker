@@ -20,7 +20,13 @@ import BudgetVsSpentChart from "../components/charts/BudgetVsSpentChart";
 
 import { getBudgetsByMonth } from "../api/budgetApi";
 
+import { useTranslation } from "react-i18next";
+
+import { formatMonth, getCurrentMonth, getRecentMonths } from "../utils/months";
+
 export default function Dashboard() {
+  const { t, i18n } = useTranslation();
+
   // =========================
   // DASHBOARD
   // =========================
@@ -57,14 +63,20 @@ export default function Dashboard() {
   // SELECTED MONTH
   // =========================
 
-  const [selectedMonth, setSelectedMonth] = useState("2026-08");
+  const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
+
+  // =========================
+  // AVAILABLE MONTHS
+  // =========================
+
+  const availableMonths = getRecentMonths();
 
   // =========================
   // CURRENCY FORMAT
   // =========================
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("es-ES", {
+    return new Intl.NumberFormat(i18n.language, {
       style: "currency",
       currency: "EUR",
     }).format(value);
@@ -110,7 +122,7 @@ export default function Dashboard() {
     } catch (error) {
       console.error(error);
 
-      setError("Error loading dashboard");
+      setError(t("dashboard.loadError"));
     } finally {
       setLoading(false);
     }
@@ -144,8 +156,16 @@ export default function Dashboard() {
   // NO DASHBOARD
   // =========================
 
-  if (!dashboard) {
-    return null;
+  if (loading || !dashboard) {
+    return (
+      <>
+        <Navbar />
+
+        <main className="page-container">
+          <p>{t("common.loading")}</p>
+        </main>
+      </>
+    );
   }
 
   // =========================
@@ -163,29 +183,27 @@ export default function Dashboard() {
 
         <div className="page-header">
           <div>
-            <p className="eyebrow">FINANCE OVERVIEW</p>
+            <p className="eyebrow">{t("dashboard.eyebrow")}</p>
 
-            <h1>Dashboard</h1>
+            <h1>{t("dashboard.title")}</h1>
 
-            <p className="page-description">
-              Here's an overview of your finances.
-            </p>
+            <p className="page-description">{t("dashboard.description")}</p>
 
             {/* MONTH SELECTOR */}
 
             <div className="month-selector">
-              <label htmlFor="month">Month</label>
+              <label htmlFor="month">{t("dashboard.month")}</label>
 
               <select
                 id="month"
                 value={selectedMonth}
                 onChange={(event) => setSelectedMonth(event.target.value)}
               >
-                <option value="2026-09">September 2026</option>
-
-                <option value="2026-08">August 2026</option>
-
-                <option value="2026-04">April 2026</option>
+                {availableMonths.map((month) => (
+                  <option key={month} value={month}>
+                    {formatMonth(month, i18n.language)}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -197,21 +215,21 @@ export default function Dashboard() {
 
         <section className="dashboard-grid">
           <DashboardCard
-            title="Total balance"
+            title={t("dashboard.balance")}
             value={formatCurrency(dashboard.balance)}
             icon="💰"
             type="balance"
           />
 
           <DashboardCard
-            title="Total income"
+            title={t("dashboard.income")}
             value={formatCurrency(dashboard.totalIncome)}
             icon="↗"
             type="income"
           />
 
           <DashboardCard
-            title="Total expenses"
+            title={t("dashboard.expenses")}
             value={formatCurrency(dashboard.totalExpenses)}
             icon="↘"
             type="expense"
@@ -224,9 +242,9 @@ export default function Dashboard() {
 
         <section className="dashboard-chart-card">
           <div className="chart-header">
-            <h2>Expenses by category</h2>
+            <h2>{t("dashboard.expensesByCategory")}</h2>
 
-            <p>Where your money is going.</p>
+            <p>{t("dashboard.expensesByCategoryDescription")}</p>
           </div>
 
           <ExpensesByCategoryChart data={expensesByCategory} />
@@ -238,9 +256,9 @@ export default function Dashboard() {
 
         <section className="dashboard-chart-card">
           <div className="chart-header">
-            <h2>Budget vs spent</h2>
+            <h2>{t("dashboard.budgetVsSpent")}</h2>
 
-            <p>Compare your budget with your actual spending.</p>
+            <p>{t("dashboard.budgetVsSpentDescription")}</p>
           </div>
 
           <BudgetVsSpentChart data={budgetVsSpent} />
@@ -253,9 +271,9 @@ export default function Dashboard() {
         <section className="content-card">
           <div className="section-header">
             <div>
-              <h2>Recent transactions</h2>
+              <h2>{t("dashboard.recentTransactions")}</h2>
 
-              <p>Your latest financial activity.</p>
+              <p>{t("dashboard.recentTransactionsDescription")}</p>
             </div>
           </div>
 
