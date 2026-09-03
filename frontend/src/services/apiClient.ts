@@ -17,8 +17,8 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
   });
 
   if (!response.ok) {
-    // Lanza un error genérico si el servidor responde con error
-    // (Puedes integrar tu errorHandler aquí si lo prefieres)
+    // Throw a generic error when the server responds with an error.
+    // (You can integrate errorHandler here if preferred.)
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || `Error ${response.status}`);
   }

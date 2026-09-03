@@ -5,6 +5,10 @@ import jakarta.persistence.Converter;
 
 import java.time.YearMonth;
 
+/**
+ * JPA attribute converter that persists {@link YearMonth} values as
+ * strings in the {@code YYYY-MM} format.
+ */
 @Converter(
         autoApply = true
 )
@@ -14,6 +18,12 @@ public class YearMonthAttributeConverter
                 String
         > {
 
+    /**
+     * Converts a {@link YearMonth} to its {@code YYYY-MM} string form.
+     *
+     * @param attribute the value to convert (may be {@code null})
+     * @return the string representation, or {@code null}
+     */
     @Override
     public String convertToDatabaseColumn(
             YearMonth attribute
@@ -26,6 +36,13 @@ public class YearMonthAttributeConverter
         return attribute.toString();
     }
 
+    /**
+     * Parses a {@code YYYY-MM} database value back into a
+     * {@link YearMonth}.
+     *
+     * @param dbData the stored value (may be {@code null})
+     * @return the parsed instance, or {@code null}
+     */
     @Override
     public YearMonth convertToEntityAttribute(
             String dbData

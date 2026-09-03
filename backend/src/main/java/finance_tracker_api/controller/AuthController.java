@@ -13,6 +13,10 @@ import finance_tracker_api.service.AuthService;
 import finance_tracker_api.service.JwtService;
 import finance_tracker_api.service.RefreshTokenService;
 
+/**
+ * REST endpoints for authentication: register, login, token refresh and
+ * logout.
+ */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -21,6 +25,13 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
     private final JwtService jwtService;
 
+    /**
+     * Creates the authentication controller.
+     *
+     * @param authService           authentication business logic
+     * @param refreshTokenService   refresh token lifecycle
+     * @param jwtService            JWT creation
+     */
     public AuthController(
             AuthService authService,
             RefreshTokenService refreshTokenService,
@@ -31,6 +42,12 @@ public class AuthController {
         this.jwtService = jwtService;
     }
 
+    /**
+     * Registers a new user account.
+     *
+     * @param request the registration data
+     * @return the created user (HTTP 201)
+     */
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponse register(
@@ -39,6 +56,12 @@ public class AuthController {
         return authService.register(request);
     }
 
+    /**
+     * Authenticates a user and returns fresh tokens.
+     *
+     * @param request the login credentials
+     * @return access and refresh tokens
+     */
     @PostMapping("/login")
     public LoginResponse login(
             @Valid @RequestBody LoginRequest request
@@ -46,6 +69,13 @@ public class AuthController {
         return authService.login(request);
     }
 
+    /**
+     * Exchanges a valid refresh token for a new access token and a rotated
+     * refresh token.
+     *
+     * @param request the refresh token
+     * @return the new tokens
+     */
     @PostMapping("/refresh")
     public LoginResponse refreshToken(
             @Valid @RequestBody RefreshTokenRequest request
@@ -56,6 +86,11 @@ public class AuthController {
         return new LoginResponse(newAccessToken, newRefreshToken);
     }
 
+    /**
+     * Revokes the given refresh token (HTTP 204).
+     *
+     * @param request the refresh token to revoke
+     */
     @PostMapping("/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void logout(

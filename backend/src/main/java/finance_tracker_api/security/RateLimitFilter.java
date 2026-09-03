@@ -13,16 +13,35 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * Servlet filter that applies rate limiting to the auth endpoints.
+ *
+ * <p>Each client (identified by IP) gets a token bucket; when the bucket is
+ * exhausted the request is rejected with HTTP 429.</p>
+ */
 @Component
 @Order(1)
 public class RateLimitFilter extends OncePerRequestFilter {
 
     private final RateLimitConfig rateLimitConfig;
 
+    /**
+     * Creates the rate limit filter.
+     *
+     * @param rateLimitConfig provides the per-client token buckets
+     */
     public RateLimitFilter(RateLimitConfig rateLimitConfig) {
         this.rateLimitConfig = rateLimitConfig;
     }
 
+    /**
+     * Consumes one token for auth requests and continues the chain, or
+     * returns HTTP 429 when the limit is reached.
+     *
+     * @param request     the HTTP request
+     * @param response    the HTTP response
+     * @param filterChain the remaining filter chain
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -48,6 +67,12 @@ public class RateLimitFilter extends OncePerRequestFilter {
         }
     }
 
+    /**
+     * Resolves the client IP, honoring the {@code X-Forwarded-For} header.
+     *
+     * @param request the HTTP request
+     * @return the client IP address
+     */
     private String getClientIP(HttpServletRequest request) {
         String xfHeader = request.getHeader("X-Forwarded-For");
         if (xfHeader == null) {

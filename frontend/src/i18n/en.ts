@@ -7,7 +7,7 @@ const en = {
       dashboard: 'Dashboard',
       categories: 'Categories',
       transactions: 'Transactions',
-      budgets: 'Budgets', // Añadido
+      budgets: 'Budgets', // Added
       logout: 'Logout'
     },
 
@@ -65,7 +65,7 @@ const en = {
       financeManagement: 'FINANCE MANAGEMENT',
       exporting: 'Exporting...',
       exportCsv: 'Export CSV',
-      // Añadidas para los formularios
+      // Added for the forms
     // description: 'Description',
       amount: 'Amount',
       date: 'Date',
@@ -83,7 +83,7 @@ const en = {
       income: 'Income',
       expense: 'Expense',
       count: '{{count}} categories',
-      // Añadidas para los componentes
+      // Added for the components
       noCategories: 'No categories yet',
       noCategoriesDescription: 'Create your first category to start organizing your finances.',
       namePlaceholder: 'Category name'
@@ -107,7 +107,7 @@ const en = {
       noBudgetsForMonth: 'No budgets for this month',
       noBudgetsForMonthDescription: 'Create a budget to start tracking your spending.',
       budgetManagement: 'BUDGET MANAGEMENT',
-      // Añadidas para los componentes
+      // Added for the components
       selectCategory: 'Select category',
       deleteBudget: 'Delete budget',
       overBudget: 'Over budget'
@@ -129,7 +129,7 @@ const en = {
       compareBudget: 'Compare your budget with your actual spending.',
       latestActivity: 'Your latest financial activity.',
       financeOverview: 'FINANCE OVERVIEW',
-      // Añadidas para los gráficos
+      // Added for the charts
       noExpenseData: 'No expense data available.',
       noBudgetData: 'No budget data available.'
     },

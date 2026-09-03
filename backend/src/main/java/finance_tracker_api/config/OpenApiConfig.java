@@ -10,9 +10,20 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configures the OpenAPI / Swagger documentation of the API.
+ *
+ * <p>Registers API metadata and a bearer-token security scheme used to
+ * authenticate calls from the Swagger UI.</p>
+ */
 @Configuration
 public class OpenApiConfig {
 
+    /**
+     * Builds the OpenAPI description for the application.
+     *
+     * @return the configured {@link OpenAPI} instance
+     */
     @Bean
     public OpenAPI financeTrackerOpenAPI() {
         final String securitySchemeName = "bearerAuth";

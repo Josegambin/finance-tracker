@@ -11,6 +11,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Exports the user's transactions to CSV format.
+ *
+ * <p>Applies the same filters as the transaction listing and produces a
+ * UTF-8 CSV with a BOM and a semicolon separator.</p>
+ */
 @Service
 public class TransactionExportService {
 
@@ -18,6 +24,12 @@ public class TransactionExportService {
 
     private final CurrentUserService currentUserService;
 
+    /**
+     * Creates the export service.
+     *
+     * @param transactionRepository repository for transaction queries
+     * @param currentUserService    resolves the authenticated user
+     */
     public TransactionExportService(
             TransactionRepository transactionRepository,
             CurrentUserService currentUserService
@@ -31,6 +43,16 @@ public class TransactionExportService {
     }
 
 
+    /**
+     * Builds a CSV document with the filtered transactions of the current
+     * user.
+     *
+     * @param search     optional text filter on description/category name
+     * @param type       optional transaction type filter
+     * @param categoryId optional category filter
+     * @param month      optional month filter (format {@code YYYY-MM})
+     * @return the CSV content (with UTF-8 BOM)
+     */
     public String exportCsv(
             String search,
             TransactionType type,
@@ -210,6 +232,15 @@ public class TransactionExportService {
     }
 
 
+    /**
+     * Escapes a value for a semicolon-separated CSV document.
+     *
+     * <p>Values containing a separator, quotes or line breaks are enclosed
+     * in double quotes and embedded quotes are doubled.</p>
+     *
+     * @param value the raw value (may be {@code null})
+     * @return the escaped value
+     */
     private String escapeCsv(
             String value
     ) {

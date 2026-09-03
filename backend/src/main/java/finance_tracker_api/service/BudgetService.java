@@ -20,6 +20,13 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
+/**
+ * Business logic for managing monthly budgets.
+ *
+ * <p>Budgets can only be created for expense categories owned by the
+ * current user. A budget is unique per user, category and month, and each
+ * response is enriched with the amount already spent.</p>
+ */
 @Service
 public class BudgetService {
 
@@ -31,6 +38,14 @@ public class BudgetService {
 
         private final CurrentUserService currentUserService;
 
+        /**
+         * Creates the budget service.
+         *
+         * @param budgetRepository        repository for budget persistence
+         * @param categoryRepository      repository for category lookups
+         * @param transactionRepository   repository used to compute spent amounts
+         * @param currentUserService      resolves the authenticated user
+         */
         public BudgetService(
                         BudgetRepository budgetRepository,
                         CategoryRepository categoryRepository,
@@ -45,6 +60,17 @@ public class BudgetService {
                 this.currentUserService = currentUserService;
         }
 
+        /**
+         * Creates a budget for the current user.
+         *
+         * @param request the budget data
+         * @return the created budget with spending info
+         * @throws ResourceNotFoundException if the category does not exist
+         * @throws IllegalArgumentException  if the category is not owned,
+         *                                   is not an expense category, or a
+         *                                   budget already exists for the
+         *                                   user/category/month combination
+         */
         public BudgetResponse createBudget(
                         CreateBudgetRequest request) {
 
@@ -57,9 +83,8 @@ public class BudgetService {
                                                 () -> new ResourceNotFoundException("Category", request.categoryId()));
 
                 /*
-                 * Seguridad:
-                 * comprobamos que la categoría
-                 * pertenece al usuario actual.
+                 * Security: checks that the category
+                 * belongs to the current user.
                  */
 
                 if (!category.getUser()
@@ -71,8 +96,8 @@ public class BudgetService {
                 }
 
                 /*
-                 * Un presupuesto solo tiene sentido
-                 * para categorías de gasto.
+                 * A budget only makes sense
+                 * for expense categories.
                  */
 
                 if (category.getType() != CategoryType.EXPENSE) {
@@ -82,8 +107,8 @@ public class BudgetService {
                 }
 
                 /*
-                 * Comprobamos que no exista ya
-                 * un presupuesto para:
+                 * Checks that no budget already
+                 * exists for:
                  *
                  * user + category + month
                  */
@@ -114,6 +139,12 @@ public class BudgetService {
                                 savedBudget);
         }
 
+        /**
+         * Returns a page of budgets of the current user.
+         *
+         * @param pageable pagination information
+         * @return a page of budgets with spending info
+         */
         public Page<BudgetResponse> getBudgets(Pageable pageable) {
 
                 User user = currentUserService.getCurrentUser();
@@ -123,6 +154,13 @@ public class BudgetService {
                                 .map(this::toBudgetResponse);
         }
 
+        /**
+         * Returns the budgets of the current user for a specific month,
+         * ordered by category name.
+         *
+         * @param month the month to filter by
+         * @return matching budgets with spending info
+         */
         public List<BudgetResponse> getBudgets(YearMonth month) {
 
                 User user = currentUserService.getCurrentUser();
@@ -136,6 +174,13 @@ public class BudgetService {
                                 .toList();
         }
 
+        /**
+         * Deletes a budget of the current user.
+         *
+         * @param id the budget ID
+         * @throws ResourceNotFoundException if the budget does not exist
+         * @throws RuntimeException          if the budget belongs to another user
+         */
         public void deleteBudget(
                         Long id) {
 
@@ -147,9 +192,8 @@ public class BudgetService {
                                                 () -> new ResourceNotFoundException("Budget", id));
 
                 /*
-                 * Seguridad:
-                 * un usuario no puede borrar
-                 * el presupuesto de otro usuario.
+                 * Security: a user cannot delete
+                 * another user's budget.
                  */
 
                 if (!budget.getUser()
@@ -164,6 +208,13 @@ public class BudgetService {
                                 budget);
         }
 
+        /**
+         * Maps a budget entity to its response, computing the spent,
+         * remaining and percentage data for the budget month.
+         *
+         * @param budget the entity to map
+         * @return the enriched response DTO
+         */
         private BudgetResponse toBudgetResponse(
                         Budget budget) {
 

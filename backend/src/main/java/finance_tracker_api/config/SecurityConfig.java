@@ -18,29 +18,61 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import finance_tracker_api.security.JwtAuthenticationFilter;
 
+/**
+ * Spring Security configuration.
+ *
+ * <p>Sets up a stateless filter chain that permits public access to the
+ * auth, health, OpenAPI and actuator endpoints, and requires a valid JWT
+ * for everything else. CORS is enabled for the configured front-end
+ * origin.</p>
+ */
 @Configuration
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    /**
+     * Creates the security configuration.
+     *
+     * @param jwtAuthenticationFilter filter that validates JWTs on each
+     *                                request
+     */
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
+    /**
+     * Provides the password encoder used to hash user passwords.
+     *
+     * @return a BCrypt-based encoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Exposes Spring Security's authentication manager.
+     *
+     * @param configuration the authentication configuration
+     * @return the authentication manager
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
+    /**
+     * Builds the HTTP security filter chain.
+     *
+     * @param http the security builder
+     * @return the configured filter chain
+     * @throws Exception if the chain cannot be configured
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // <-- Integración CORS
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // <-- CORS integration
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
@@ -54,6 +86,11 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Provides the CORS configuration for cross-origin requests.
+     *
+     * @return the CORS configuration source
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

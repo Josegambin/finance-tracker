@@ -21,6 +21,14 @@ import org.springframework.stereotype.Service;
 import java.time.YearMonth;
 import java.util.List;
 
+/**
+ * Business logic for managing financial transactions.
+ *
+ * <p>All queries are scoped to the current user and support dynamic
+ * filtering through JPA {@link Specification}s. Transactions can only be
+ * created with categories owned by the current user whose type matches the
+ * transaction type.</p>
+ */
 @Service
 public class TransactionService {
 
@@ -28,6 +36,13 @@ public class TransactionService {
         private final CategoryRepository categoryRepository;
         private final CurrentUserService currentUserService;
 
+        /**
+         * Creates the transaction service.
+         *
+         * @param transactionRepository repository for transaction persistence
+         * @param categoryRepository      repository for category lookups
+         * @param currentUserService      resolves the authenticated user
+         */
         public TransactionService(
                         TransactionRepository transactionRepository,
                         CategoryRepository categoryRepository,
@@ -39,6 +54,18 @@ public class TransactionService {
                 this.currentUserService = currentUserService;
         }
 
+        /**
+         * Returns a page of transactions for the current user matching the
+         * given optional filters.
+         *
+         * @param pageable   pagination information
+         * @param search     optional text filter on description/category name
+         * @param type       optional transaction type filter
+         * @param categoryId optional category filter
+         * @param month      optional month filter (format {@code YYYY-MM})
+         * @return the paginated results
+         * @throws InvalidRequestException if the month format is invalid
+         */
         public TransactionPageResponse findAll(
                         Pageable pageable,
                         String search,
@@ -49,16 +76,15 @@ public class TransactionService {
                 User user = currentUserService.getCurrentUser();
 
                 /*
-                 * Specification base:
-                 *
-                 * Solo recuperamos las transacciones
-                 * pertenecientes al usuario autenticado.
+                 * Base specification: only fetches
+                 * the transactions that belong
+                 * to the authenticated user.
                  */
                 Specification<Transaction> specification = TransactionSpecification.hasUserId(
                                 user.getId());
 
                 /*
-                 * Filtro Search.
+                 * Search filter.
                  */
                 if (search != null && !search.isBlank()) {
 
@@ -91,7 +117,7 @@ public class TransactionService {
                  * Filtro Month.
                  */
                if (month != null && !month.isBlank()) {
-               
+
                    try {
                        YearMonth.parse(month);
                    } catch (Exception e) {
@@ -99,7 +125,7 @@ public class TransactionService {
                                "Invalid month format. Expected YYYY-MM"
                        );
                    }
-               
+
                    specification =
                            specification.and(
                                    TransactionSpecification.hasMonth(
@@ -125,6 +151,16 @@ public class TransactionService {
                                 page.getSize());
         }
 
+        /**
+         * Creates a transaction for the current user.
+         *
+         * @param request the transaction data
+         * @return the created transaction
+         * @throws ResourceNotFoundException if the category does not exist
+         * @throws IllegalArgumentException  if the category belongs to another
+         *                                   user or its type does not match
+         *                                   the transaction type
+         */
         public TransactionResponse create(
                         CreateTransactionRequest request) {
 
@@ -135,10 +171,8 @@ public class TransactionService {
                                 .orElseThrow(() -> new ResourceNotFoundException("Category", request.categoryId()));
 
                 /*
-                 * Seguridad:
-                 *
-                 * La categoría debe pertenecer
-                 * al usuario autenticado.
+                 * Security: the category must belong
+                 * to the authenticated user.
                  */
 
                 if (!category.getUser()
@@ -150,9 +184,8 @@ public class TransactionService {
                 }
 
                 /*
-                 * Validamos que el tipo de la
-                 * categoría coincida con el tipo
-                 * de la transacción.
+                 * Validates that the category type
+                 * matches the transaction type.
                  */
 
                 if (!category.getType()
@@ -188,6 +221,13 @@ public class TransactionService {
                 return toResponse(savedTransaction);
         }
 
+        /**
+         * Deletes a transaction of the current user.
+         *
+         * @param id the transaction ID
+         * @throws ResourceNotFoundException if the transaction does not exist
+         * @throws RuntimeException          if the transaction belongs to another user
+         */
         public void delete(Long id) {
 
                 User user = currentUserService.getCurrentUser();
@@ -197,8 +237,8 @@ public class TransactionService {
                                 .orElseThrow(() -> new ResourceNotFoundException("Transaction", id));
 
                 /*
-                 * No permitimos eliminar
-                 * transacciones de otro usuario.
+                 * Deletion of transactions that
+                 * belong to another user is not allowed.
                  */
 
                 if (!transaction.getUser()
@@ -213,6 +253,12 @@ public class TransactionService {
                                 transaction);
         }
 
+        /**
+         * Maps a transaction entity to its public response.
+         *
+         * @param transaction the entity to map
+         * @return the response DTO
+         */
         private TransactionResponse toResponse(
                         Transaction transaction) {
 

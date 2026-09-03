@@ -4,6 +4,13 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+/**
+ * Request payload for creating a new user account.
+ *
+ * @param name     the display name of the user
+ * @param email    the unique email address
+ * @param password the raw password (at least 8 characters)
+ */
 public record RegisterRequest(
 
         @NotBlank(message = "Name is required")

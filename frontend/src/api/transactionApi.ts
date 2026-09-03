@@ -1,3 +1,11 @@
+/**
+ * API client functions for managing transactions, including list/filter
+ * queries and CSV export.
+ *
+ * All functions use {@link apiFetch} and attach the authentication token via
+ * {@link getHeaders}. Errors are normalized with {@link errorHandler}.
+ */
+
 import type {
   Transaction,
   CreateTransactionRequest,
@@ -7,6 +15,12 @@ import type {
 import { errorHandler } from '../services/errorHandler';
 import { apiFetch } from '../services/apiClient';
 
+/**
+ * Builds the headers for transaction requests, including the `Bearer` token
+ * read from `localStorage`.
+ *
+ * @returns The headers object with `Content-Type` and `Authorization`.
+ */
 function getHeaders(): HeadersInit {
 
   const token =
@@ -24,16 +38,33 @@ function getHeaders(): HeadersInit {
 
 }
 
+/**
+ * Query parameters used to filter, paginate and sort transactions.
+ */
 export interface TransactionQuery {
+  /** Zero-based page number to fetch. */
   page?: number;
+  /** Number of items per page. */
   size?: number;
+  /** Sort directive, e.g. `date,desc`. */
   sort?: string;
+  /** Free-text search term applied to transaction descriptions. */
   search?: string;
+  /** Filter by transaction type, or `'ALL'` to include both types. */
   type?: TransactionType | 'ALL';
+  /** Filter by category id, or `'ALL'` to include all categories. */
   categoryId?: number | 'ALL';
+  /** Filter by the ISO month (`yyyy-MM`) the transaction belongs to. */
   month?: string;
 }
 
+/**
+ * Fetches a paginated, filtered list of transactions for the authenticated user.
+ *
+ * @param query - Optional query parameters for pagination, filtering and sorting.
+ * @returns A promise that resolves to a page response with transactions and metadata.
+ * @throws Throws the error normalized by {@link errorHandler} if the request fails.
+ */
 export async function getTransactions(
   query: TransactionQuery = {}
 ): Promise<TransactionPageResponse> {
@@ -86,6 +117,13 @@ export async function getTransactions(
 
 }
 
+/**
+ * Creates a new transaction for the authenticated user.
+ *
+ * @param request - The data of the transaction to create.
+ * @returns A promise that resolves to the created transaction.
+ * @throws Throws the error normalized by {@link errorHandler} if the request fails.
+ */
 export async function createTransaction(
   request: CreateTransactionRequest
 ): Promise<Transaction> {
@@ -113,6 +151,13 @@ export async function createTransaction(
 
 }
 
+/**
+ * Deletes an existing transaction by its id.
+ *
+ * @param id - The numeric id of the transaction to delete.
+ * @returns A promise that resolves once the transaction has been deleted.
+ * @throws Throws the error normalized by {@link errorHandler} if the request fails.
+ */
 export async function deleteTransaction(
   id: number
 ): Promise<void> {
@@ -142,6 +187,16 @@ export async function deleteTransaction(
  * ============================
  */
 
+/**
+ * Exports transactions matching the given filters as a CSV file.
+ *
+ * @param search - Optional free-text search term.
+ * @param type - Optional transaction type filter (`'INCOME'`, `'EXPENSE'` or `'ALL'`).
+ * @param categoryId - Optional category id filter.
+ * @param month - Optional ISO month (`yyyy-MM`) filter.
+ * @returns A promise that resolves to the CSV file contents as a `Blob`.
+ * @throws Throws the error normalized by {@link errorHandler} if the request fails.
+ */
 export async function exportTransactionsCsv(
   search?: string,
   type?: string,

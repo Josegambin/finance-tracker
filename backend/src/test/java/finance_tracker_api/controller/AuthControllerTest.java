@@ -23,32 +23,47 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Web-layer tests for {@link AuthController} using MockMvc.
+ */
 @WebMvcTest(AuthController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class AuthControllerTest {
 
+  /** MVC entry point for sending requests to the auth endpoints. */
   @Autowired
   private MockMvc mockMvc;
 
+  /** Mocked authentication service. */
   @MockitoBean
   private AuthService authService;
 
+  /** Mocked refresh-token service. */
   @MockitoBean
   private RefreshTokenService refreshTokenService;
 
+  /** Mocked JWT utility service. */
   @MockitoBean
   private JwtService jwtService;
 
+  /** Mocked user-details service required by the security context. */
   @MockitoBean
   private CustomUserDetailsService customUserDetailsService;
 
+  /** Mocked rate-limit configuration so limits are disabled in tests. */
   @MockitoBean
   private RateLimitConfig rateLimitConfig;
 
+  /** JSON payload for a valid registration request. */
   private static final String REGISTER_BODY = "{\"name\":\"John Doe\",\"email\":\"john@example.com\",\"password\":\"password123\"}";
 
+  /** JSON payload for a valid login request. */
   private static final String LOGIN_BODY = "{\"email\":\"john@example.com\",\"password\":\"password123\"}";
 
+  /**
+   * Returns 201 CREATED with the user payload on successful
+   * registration.
+   */
   @Test
   void register_shouldReturnCreated_withUserResponse() throws Exception {
     when(authService.register(any(RegisterRequest.class)))
@@ -65,6 +80,9 @@ class AuthControllerTest {
         .andExpect(jsonPath("$.email").value("john@example.com"));
   }
 
+  /**
+   * Returns 400 BAD REQUEST when the registration payload is invalid.
+   */
   @Test
   void register_shouldReturn400_whenPayloadInvalid() throws Exception {
     mockMvc.perform(post("/api/auth/register")
@@ -73,6 +91,9 @@ class AuthControllerTest {
         .andExpect(status().isBadRequest());
   }
 
+  /**
+   * Returns the access and refresh tokens on successful login.
+   */
   @Test
   void login_shouldReturnTokens() throws Exception {
     when(authService.login(any(LoginRequest.class)))

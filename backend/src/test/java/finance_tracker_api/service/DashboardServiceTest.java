@@ -23,23 +23,39 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for {@link DashboardService} using Mockito.
+ */
 @ExtendWith(MockitoExtension.class)
 class DashboardServiceTest {
 
+    /** Mocked transaction repository. */
     @Mock
     private TransactionRepository transactionRepository;
 
+    /** Mocked service resolving the authenticated user. */
     @Mock
     private CurrentUserService currentUserService;
 
+    /** The service under test, with mocked dependencies injected. */
     @InjectMocks
     private DashboardService dashboardService;
 
+    /** The authenticated user fixture. */
     private User user;
+
+    /** Sample income transaction. */
     private Transaction income;
+
+    /** Sample expense transaction. */
     private Transaction expense;
+
+    /** Fixed month used across tests. */
     private final YearMonth month = YearMonth.of(2026, 9);
 
+    /**
+     * Builds the test user, categories and sample transactions.
+     */
     @BeforeEach
     void setUp() throws Exception {
         user = new User("John Doe", "john@example.com", "encoded");
@@ -61,12 +77,28 @@ class DashboardServiceTest {
         expense = buildTransaction("Groceries", new BigDecimal("450.50"), TransactionType.EXPENSE, food);
     }
 
+    /**
+     * Assigns a {@code id} to an entity reflectively, simulating
+     * persistence so that identifiers are available in tests.
+     *
+     * @param entity the entity to mutate
+     * @param id     the identifier to assign
+     */
     private static void setId(Object entity, Long id) throws Exception {
         var field = entity.getClass().getDeclaredField("id");
         field.setAccessible(true);
         field.set(entity, id);
     }
 
+    /**
+     * Builds a transaction fixture linked to the current user.
+     *
+     * @param desc     the transaction description
+     * @param amount   the transaction amount
+     * @param type     the transaction type (income or expense)
+     * @param category the category the transaction belongs to
+     * @return a fully populated transaction
+     */
     private Transaction buildTransaction(String desc, BigDecimal amount, TransactionType type, Category category)
             throws Exception {
         Transaction t = new Transaction();
@@ -80,6 +112,9 @@ class DashboardServiceTest {
         return t;
     }
 
+    /**
+     * Computes income, expenses, balance and recent transactions.
+     */
     @Test
     void getDashboard_shouldComputeBalanceIncomeExpenses() {
         when(currentUserService.getCurrentUser()).thenReturn(user);
@@ -99,6 +134,9 @@ class DashboardServiceTest {
         assertEquals(2, response.recentTransactions().size());
     }
 
+    /**
+     * Returns zero values when there are no transactions for the month.
+     */
     @Test
     void getDashboard_shouldReturnZeroWhenNoTransactions() {
         when(currentUserService.getCurrentUser()).thenReturn(user);
@@ -117,6 +155,9 @@ class DashboardServiceTest {
         assertTrue(response.recentTransactions().isEmpty());
     }
 
+    /**
+     * Delegates category aggregation to the repository.
+     */
     @Test
     void getExpensesByCategory_shouldDelegateWithDateRange() {
         when(currentUserService.getCurrentUser()).thenReturn(user);

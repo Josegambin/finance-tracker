@@ -15,17 +15,36 @@ import finance_tracker_api.dto.transaction.TransactionResponse;
 import finance_tracker_api.entity.TransactionType;
 import finance_tracker_api.service.TransactionService;
 
+/**
+ * REST endpoints for managing transaction resources.
+ */
 @RestController
 @RequestMapping("/api/transactions")
 public class TransactionController {
 
         private final TransactionService transactionService;
 
+        /**
+         * Creates the transaction controller.
+         *
+         * @param transactionService transaction business logic
+         */
         public TransactionController(
                         TransactionService transactionService) {
                 this.transactionService = transactionService;
         }
 
+        /**
+         * Returns a paginated, filterable list of transactions.
+         *
+         * @param search     optional text filter
+         * @param type       optional transaction type filter
+         * @param categoryId optional category filter
+         * @param month      optional month filter (format {@code YYYY-MM})
+         * @param pageable   pagination parameters (default size 10, sorted by
+         *                   date descending)
+         * @return the paginated results
+         */
         @GetMapping
         public ResponseEntity<TransactionPageResponse> findAll(
                         @RequestParam(required = false) String search,
@@ -45,6 +64,12 @@ public class TransactionController {
                                                 month));
         }
 
+        /**
+         * Creates a new transaction (HTTP 201).
+         *
+         * @param request the transaction data
+         * @return the created transaction
+         */
         @PostMapping
         @ResponseStatus(HttpStatus.CREATED)
         public TransactionResponse create(
@@ -54,6 +79,11 @@ public class TransactionController {
                                 request);
         }
 
+        /**
+         * Deletes a transaction (HTTP 204).
+         *
+         * @param id the transaction ID
+         */
         @DeleteMapping("/{id}")
         @ResponseStatus(HttpStatus.NO_CONTENT)
         public void delete(

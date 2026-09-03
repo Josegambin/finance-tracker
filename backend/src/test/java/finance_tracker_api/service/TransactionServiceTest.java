@@ -32,29 +32,48 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for {@link TransactionService}.
+ *
+ * <p>Uses Mockito to verify the service's behaviour when creating,
+ * filtering and deleting transactions, especially around category
+ * ownership and transaction-type consistency.</p>
+ */
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
 
+    /** Mocked transaction repository. */
     @Mock
     private TransactionRepository transactionRepository;
 
+    /** Mocked category repository. */
     @Mock
     private CategoryRepository categoryRepository;
 
+    /** Mocked service that provides the current authenticated user. */
     @Mock
     private CurrentUserService currentUserService;
 
     @InjectMocks
     private TransactionService transactionService;
 
+    /** The current authenticated user used across tests. */
     private User user;
+
+    /** A category owned by {@link #user}. */
     private Category category;
+
+    /** A transaction linked to {@link #category} and {@link #user}. */
     private Transaction transaction;
 
+    /**
+     * Initialises the shared fixtures ({@link #user}, {@link #category}
+     * and {@link #transaction}) before each test.
+     */
     @BeforeEach
     void setUp() {
         user = new User("John Doe", "john@example.com", "encoded");
-        // Asignamos id vía reflexión para simular persistencia
+        // Assign an id via reflection to simulate persistence
         setId(user, 1L);
 
         category = new Category();
@@ -73,6 +92,14 @@ class TransactionServiceTest {
         setId(transaction, 100L);
     }
 
+
+    /**
+     * Assigns an {@code id} to an entity reflectively, simulating
+     * persistence so that identifiers are available in tests.
+     *
+     * @param entity the entity to mutate
+     * @param id     the identifier to assign
+     */
     private static void setId(Object entity, Long id) {
         try {
             var field = entity.getClass().getDeclaredField("id");
@@ -83,6 +110,11 @@ class TransactionServiceTest {
         }
     }
 
+    /**
+     * Verifies a transaction is persisted and mapped when the category
+     * exists, belongs to the current user and its type matches the
+     * transaction type.
+     */
     @Test
     void create_shouldPersistTransaction_whenCategoryOwnedAndTypeMatches() {
         when(currentUserService.getCurrentUser()).thenReturn(user);
@@ -105,6 +137,10 @@ class TransactionServiceTest {
         verify(transactionRepository).save(any(Transaction.class));
     }
 
+    /**
+     * Verifies that creating a transaction with a non-existent category
+     * throws {@link ResourceNotFoundException} and nothing is saved.
+     */
     @Test
     void create_shouldThrow_whenCategoryNotFound() {
         when(currentUserService.getCurrentUser()).thenReturn(user);
@@ -121,6 +157,10 @@ class TransactionServiceTest {
         verify(transactionRepository, never()).save(any(Transaction.class));
     }
 
+    /**
+     * Verifies that creating a transaction with a category owned by
+     * another user throws {@code IllegalArgumentException}.
+     */
     @Test
     void create_shouldThrow_whenCategoryBelongsToAnotherUser() {
         User otherUser = new User("Other", "other@example.com", "encoded");
@@ -141,6 +181,10 @@ class TransactionServiceTest {
         verify(transactionRepository, never()).save(any(Transaction.class));
     }
 
+    /**
+     * Verifies that creating a transaction whose type does not match the
+     * category type throws {@code IllegalArgumentException}.
+     */
     @Test
     void create_shouldThrow_whenCategoryTypeDoesNotMatchTransactionType() {
         category.setType(CategoryType.EXPENSE);
@@ -159,6 +203,11 @@ class TransactionServiceTest {
         verify(transactionRepository, never()).save(any(Transaction.class));
     }
 
+    /**
+     * Verifies that {@code findAll} combines search text, type, category
+     * and month filters via a JPA {@link Specification} and returns the
+     * expected paged response.
+     */
     @Test
     void findAll_shouldApplyAllFiltersAndReturnPage() {
         when(currentUserService.getCurrentUser()).thenReturn(user);
@@ -183,6 +232,10 @@ class TransactionServiceTest {
         assertEquals("Monthly salary", response.content().get(0).description());
     }
 
+    /**
+     * Verifies that deleting a transaction owned by another user throws
+     * an exception and the transaction is not deleted.
+     */
     @Test
     void delete_shouldThrow_whenTransactionBelongsToAnotherUser() {
         User otherUser = new User("Other", "other@example.com", "encoded");
@@ -196,6 +249,10 @@ class TransactionServiceTest {
         verify(transactionRepository, never()).delete(any(Transaction.class));
     }
 
+    /**
+     * Verifies that deleting a transaction owned by the current user
+     * removes it from the repository.
+     */
     @Test
     void delete_shouldDelete_whenTransactionOwnedByCurrentUser() {
         when(currentUserService.getCurrentUser()).thenReturn(user);

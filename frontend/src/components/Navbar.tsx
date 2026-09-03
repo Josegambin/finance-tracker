@@ -15,7 +15,7 @@ export default function Navbar() {
 
   const currentLang = i18n.language.startsWith('es') ? 'es' : 'en';
 
-  // 🎨 Nueva función: Solo añade la clase 'active' si está activo. Sin clases extrañas.
+  // Only adds the class 'active' when the link is active.
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     isActive ? 'active' : '';
 

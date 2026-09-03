@@ -38,7 +38,7 @@ export const errorHandler = {
 
     if (status === 401) {
       toastService.error('Sesión expirada. Por favor, inicia sesión nuevamente.');
-      // Aquí podrías redirigir al login
+      // Here you could redirect to the login page
       throw error;
     }
 

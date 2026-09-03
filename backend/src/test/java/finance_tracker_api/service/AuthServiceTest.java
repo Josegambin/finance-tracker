@@ -23,31 +23,48 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for {@link AuthService} using Mockito.
+ */
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
+    /** Mocked user repository. */
     @Mock
     private UserRepository userRepository;
 
+    /** Mocked password encoder. */
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    /** Mocked Spring Security authentication manager. */
     @Mock
     private AuthenticationManager authenticationManager;
 
+    /** Mocked JWT token service. */
     @Mock
     private JwtService jwtService;
 
+    /** Mocked refresh-token service. */
     @Mock
     private RefreshTokenService refreshTokenService;
 
+    /** The service under test, with mocked dependencies injected. */
     @InjectMocks
     private AuthService authService;
 
+    /** Valid registration payload used in tests. */
     private RegisterRequest registerRequest;
+
+    /** Valid login payload used in tests. */
     private LoginRequest loginRequest;
+
+    /** A persisted user fixture. */
     private User user;
 
+    /**
+     * Initialises the shared request/user fixtures before each test.
+     */
     @BeforeEach
     void setUp() throws Exception {
         registerRequest = new RegisterRequest("John Doe", "john@example.com", "password123");
@@ -56,12 +73,22 @@ class AuthServiceTest {
         setId(user, 1L);
     }
 
+    /**
+     * Assigns an {@code id} to an entity reflectively, simulating
+     * persistence so that identifiers are available in tests.
+     *
+     * @param entity the entity to mutate
+     * @param id     the identifier to assign
+     */
     private static void setId(Object entity, Long id) throws Exception {
         var field = entity.getClass().getDeclaredField("id");
         field.setAccessible(true);
         field.set(entity, id);
     }
 
+    /**
+     * Registers a user when the email is not taken.
+     */
     @Test
     void register_Success() {
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
@@ -80,6 +107,9 @@ class AuthServiceTest {
         verify(userRepository).save(any(User.class));
     }
 
+    /**
+     * Rejects registration when the email is already registered.
+     */
     @Test
     void register_EmailAlreadyExists() {
         when(userRepository.existsByEmail(anyString())).thenReturn(true);
@@ -90,6 +120,9 @@ class AuthServiceTest {
         verify(userRepository, never()).save(any(User.class));
     }
 
+    /**
+     * Logs a user in and returns fresh tokens.
+     */
     @Test
     void login_Success() {
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));

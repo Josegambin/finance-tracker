@@ -1,13 +1,26 @@
-// src/api/budgetApi.ts
+/**
+ * API client functions for managing budgets.
+ *
+ * All functions use {@link apiFetch} so the authentication token is sent
+ * automatically. Errors thrown follow the shape: `Error {status}: {message}`.
+ */
+
 import { apiFetch } from '../services/apiClient';
 import type { Budget, CreateBudgetRequest } from '../types/budget';
 
+/**
+ * Fetches all budgets for the currently authenticated user.
+ *
+ * @returns A promise that resolves to the list of budgets.
+ * @throws Throws an error if the request fails, including the HTTP status
+ *         and a preview of the response body.
+ */
 export async function getBudgets(): Promise<Budget[]> {
-  // ✅ Usa apiFetch. Asegúrate de que la URL sea correcta.
+  // Uses apiFetch so the auth token is attached and the response is validated.
   const response = await apiFetch('/budgets');
 
   if (!response.ok) {
-    // Si el backend devuelve un JSON, lo leemos. Si devuelve HTML, lanzamos error genérico.
+    // If the backend returns JSON, read it. If it returns HTML, throw a generic error.
     const text = await response.text();
     throw new Error(`Error ${response.status}: ${text.slice(0, 100)}`);
   }
@@ -15,6 +28,14 @@ export async function getBudgets(): Promise<Budget[]> {
   return response.json();
 }
 
+/**
+ * Creates a new budget for the authenticated user.
+ *
+ * @param request - The data for the new budget (category, monthly amount, etc.).
+ * @returns A promise that resolves to the created budget.
+ * @throws Throws an error if the request fails, including the HTTP status
+ *         and a preview of the response body.
+ */
 export async function createBudget(request: CreateBudgetRequest): Promise<Budget> {
   const response = await apiFetch('/budgets', {
     method: 'POST',
@@ -29,6 +50,14 @@ export async function createBudget(request: CreateBudgetRequest): Promise<Budget
   return response.json();
 }
 
+/**
+ * Deletes an existing budget by its id.
+ *
+ * @param id - The numeric id of the budget to delete.
+ * @returns A promise that resolves once the budget has been deleted.
+ * @throws Throws an error if the request fails, including the HTTP status
+ *         and a preview of the response body.
+ */
 export async function deleteBudget(id: number): Promise<void> {
   const response = await apiFetch(`/budgets/${id}`, {
     method: 'DELETE'

@@ -15,12 +15,25 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
+/**
+ * Builds the aggregate data shown on the dashboard.
+ *
+ * <p>Given a month it computes income, expenses and balance for the
+ * current user plus the most recent transactions and per-category expense
+ * totals.</p>
+ */
 @Service
 public class DashboardService {
 
         private final TransactionRepository transactionRepository;
         private final CurrentUserService currentUserService;
 
+        /**
+         * Creates the dashboard service.
+         *
+         * @param transactionRepository repository for transaction queries
+         * @param currentUserService    resolves the authenticated user
+         */
         public DashboardService(
                         TransactionRepository transactionRepository,
                         CurrentUserService currentUserService) {
@@ -30,6 +43,12 @@ public class DashboardService {
                 this.currentUserService = currentUserService;
         }
 
+        /**
+         * Computes the dashboard summary for a whole month.
+         *
+         * @param month the month to analyze
+         * @return the aggregated dashboard data
+         */
         public DashboardResponse getDashboard(YearMonth month) {
 
                 User user = currentUserService.getCurrentUser();
@@ -86,6 +105,12 @@ public class DashboardService {
                                 recentTransactions);
         }
 
+        /**
+         * Maps a transaction entity to its public response.
+         *
+         * @param transaction the entity to map
+         * @return the response DTO
+         */
         private TransactionResponse toTransactionResponse(
                         Transaction transaction) {
 
@@ -110,6 +135,12 @@ public class DashboardService {
                                                 .getName());
         }
 
+        /**
+         * Aggregates expenses by category for a whole month.
+         *
+         * @param month the month to analyze
+         * @return expense totals per category, largest first
+         */
         public List<ExpenseByCategoryResponse> getExpensesByCategory(YearMonth month) {
 
                 User user = currentUserService.getCurrentUser();

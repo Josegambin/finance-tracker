@@ -45,9 +45,9 @@ export default function TransactionForm({
   const [loading, setLoading] =
     useState(false);
 
-  /*
-   * Solo mostramos categorías
-   * compatibles con el tipo.
+  /**
+   * Only categories compatible with the
+   * selected transaction type are shown.
    */
 
   const filteredCategories =
@@ -55,10 +55,10 @@ export default function TransactionForm({
       category => category.type === type
     );
 
-  /*
-   * Cuando cambia el tipo,
-   * seleccionamos automáticamente
-   * la primera categoría compatible.
+  /**
+   * When the transaction type changes,
+   * the first compatible category
+   * is automatically selected.
    */
 
   useEffect(() => {
@@ -98,9 +98,8 @@ export default function TransactionForm({
         categoryId
       });
 
-      /*
-       * Limpiamos el formulario
-       * después de crear.
+      /**
+       * Clears the form after the transaction is created.
        */
 
       setDescription('');

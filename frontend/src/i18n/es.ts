@@ -7,7 +7,7 @@ const es = {
       dashboard: 'Panel',
       categories: 'Categorías',
       transactions: 'Transacciones',
-      budgets: 'Presupuestos', // Añadido
+      budgets: 'Presupuestos', // Added
       logout: 'Cerrar sesión'
     },
 
@@ -65,7 +65,7 @@ const es = {
       financeManagement: 'GESTIÓN FINANCIERA',
       exporting: 'Exportando...',
       exportCsv: 'Exportar CSV',
-      // Añadidas para los formularios
+      // Added for the forms
       //description: 'Descripción',
       amount: 'Importe',
       date: 'Fecha',
@@ -83,7 +83,7 @@ const es = {
       income: 'Ingresos',
       expense: 'Gastos',
       count: '{{count}} categorías',
-      // Añadidas para los componentes
+      // Added for the components
       noCategories: 'No hay categorías',
       noCategoriesDescription: 'Crea tu primera categoría para empezar a organizar tus finanzas.',
       namePlaceholder: 'Nombre de la categoría'
@@ -107,7 +107,7 @@ const es = {
       noBudgetsForMonth: 'No hay presupuestos para este mes',
       noBudgetsForMonthDescription: 'Crea un presupuesto para empezar a controlar tus gastos.',
       budgetManagement: 'GESTIÓN DE PRESUPUESTOS',
-      // Añadidas para los componentes
+      // Added for the components
       selectCategory: 'Seleccionar categoría',
       deleteBudget: 'Eliminar presupuesto',
       overBudget: 'Sobrepasado'
@@ -129,7 +129,7 @@ const es = {
       compareBudget: 'Compara tu presupuesto con tus gastos reales.',
       latestActivity: 'Tu actividad financiera más reciente.',
       financeOverview: 'RESUMEN FINANCIERO',
-      // Añadidas para los gráficos
+      // Added for the charts
       noExpenseData: 'No hay datos de gastos disponibles.',
       noBudgetData: 'No hay datos de presupuesto disponibles.'
     },

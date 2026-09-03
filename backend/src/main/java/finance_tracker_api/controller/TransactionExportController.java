@@ -12,12 +12,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST endpoints for exporting transactions as downloadable files.
+ */
 @RestController
 @RequestMapping("/api/transactions/export")
 public class TransactionExportController {
 
     private final TransactionExportService exportService;
 
+    /**
+     * Creates the export controller.
+     *
+     * @param exportService CSV export business logic
+     */
     public TransactionExportController(
             TransactionExportService exportService
     ) {
@@ -27,6 +35,15 @@ public class TransactionExportController {
     }
 
 
+    /**
+     * Downloads the filtered transactions as a CSV file.
+     *
+     * @param search     optional text filter
+     * @param type       optional transaction type filter
+     * @param categoryId optional category filter
+     * @param month      optional month filter (format {@code YYYY-MM})
+     * @return the CSV content as an attachment
+     */
     @GetMapping("/csv")
     public ResponseEntity<String> exportCsv(
 

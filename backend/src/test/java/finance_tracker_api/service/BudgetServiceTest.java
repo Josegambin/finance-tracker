@@ -29,28 +29,44 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for {@link BudgetService} using Mockito.
+ */
 @ExtendWith(MockitoExtension.class)
 class BudgetServiceTest {
 
+    /** Mocked budget repository. */
     @Mock
     private BudgetRepository budgetRepository;
 
+    /** Mocked category repository. */
     @Mock
     private CategoryRepository categoryRepository;
 
+    /** Mocked transaction repository used for spent-amount lookups. */
     @Mock
     private TransactionRepository transactionRepository;
 
+    /** Mocked service resolving the authenticated user. */
     @Mock
     private CurrentUserService currentUserService;
 
+    /** The service under test, with mocked dependencies injected. */
     @InjectMocks
     private BudgetService budgetService;
 
+    /** The authenticated user fixture. */
     private User user;
+
+    /** An expense category owned by {@link #user}. */
     private Category expenseCategory;
+
+    /** Fixed month used across tests. */
     private final YearMonth month = YearMonth.of(2026, 9);
 
+    /**
+     * Initialises the user and expense-category fixtures before each test.
+     */
     @BeforeEach
     void setUp() throws Exception {
         user = new User("John Doe", "john@example.com", "encoded");
@@ -63,12 +79,23 @@ class BudgetServiceTest {
         setId(expenseCategory, 2L);
     }
 
+    /**
+     * Assigns a {@code id} to an entity reflectively, simulating
+     * persistence so that identifiers are available in tests.
+     *
+     * @param entity the entity to mutate
+     * @param id     the identifier to assign
+     */
     private static void setId(Object entity, Long id) throws Exception {
         var field = entity.getClass().getDeclaredField("id");
         field.setAccessible(true);
         field.set(entity, id);
     }
 
+    /**
+     * Persists a budget when the category is a valid owned expense
+     * category.
+     */
     @Test
     void createBudget_shouldPersist_whenValidExpenseCategory() throws Exception {
         when(currentUserService.getCurrentUser()).thenReturn(user);
@@ -90,6 +117,9 @@ class BudgetServiceTest {
         verify(budgetRepository).save(any(Budget.class));
     }
 
+    /**
+     * Rejects budgets for income categories.
+     */
     @Test
     void createBudget_shouldThrow_whenCategoryIsIncome() {
         Category incomeCategory = new Category();
@@ -105,6 +135,9 @@ class BudgetServiceTest {
         verify(budgetRepository, never()).save(any());
     }
 
+    /**
+     * Rejects budgets that reference another user's category.
+     */
     @Test
     void createBudget_shouldThrow_whenCategoryBelongsToAnotherUser() throws Exception {
         User other = new User("Other", "other@example.com", "encoded");
@@ -118,6 +151,9 @@ class BudgetServiceTest {
                 () -> budgetService.createBudget(new CreateBudgetRequest(2L, month, new BigDecimal("500"))));
     }
 
+    /**
+     * Rejects a duplicate budget for the same user, category and month.
+     */
     @Test
     void createBudget_shouldThrow_whenBudgetAlreadyExists() {
         when(currentUserService.getCurrentUser()).thenReturn(user);
@@ -130,6 +166,9 @@ class BudgetServiceTest {
         verify(budgetRepository, never()).save(any());
     }
 
+    /**
+     * Enriches budgets with spent, remaining and percentage data.
+     */
     @Test
     void getBudgets_shouldIncludeSpentAndPercentage() throws Exception {
         Budget budget = new Budget(user, expenseCategory, month, new BigDecimal("500.00"));
@@ -151,6 +190,9 @@ class BudgetServiceTest {
         assertEquals(new BigDecimal("50.00"), response.get(0).percentageUsed());
     }
 
+    /**
+     * Treats a null spent amount as zero.
+     */
     @Test
     void getBudgets_shouldHandleNullSpentAmount() throws Exception {
         Budget budget = new Budget(user, expenseCategory, month, new BigDecimal("500.00"));
@@ -168,6 +210,9 @@ class BudgetServiceTest {
         assertEquals(new BigDecimal("500.00"), response.get(0).remainingAmount());
     }
 
+    /**
+     * Returns budgets as a paginated result.
+     */
     @Test
     void getBudgetsPaginated_shouldReturnPage() throws Exception {
         Budget budget = new Budget(user, expenseCategory, month, new BigDecimal("500.00"));
@@ -185,13 +230,16 @@ class BudgetServiceTest {
         assertEquals(10L, page.getContent().get(0).id());
     }
 
+    /**
+     * Prevents a user from deleting another user's budget.
+     */
     @Test
     void deleteBudget_shouldThrow_whenNotOwner() throws Exception {
         User other = new User("Other", "other@example.com", "encoded");
         setId(other, 9L);
         Budget budget = new Budget(user, expenseCategory, month, new BigDecimal("100"));
         setId(budget, 10L);
-        // budget pertenece a "user", pero quien llama es "other"
+        // The budget belongs to "user", but the caller is "other".
         when(currentUserService.getCurrentUser()).thenReturn(other);
         when(budgetRepository.findById(10L)).thenReturn(Optional.of(budget));
 
@@ -199,6 +247,9 @@ class BudgetServiceTest {
         verify(budgetRepository, never()).delete(any());
     }
 
+    /**
+     * Throws when the budget to delete does not exist.
+     */
     @Test
     void deleteBudget_shouldThrow_whenNotFound() {
         when(currentUserService.getCurrentUser()).thenReturn(user);

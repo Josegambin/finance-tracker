@@ -16,6 +16,13 @@ import finance_tracker_api.service.JwtService;
 
 import java.io.IOException;
 
+/**
+ * Servlet filter that authenticates requests carrying a Bearer JWT.
+ *
+ * <p>When a valid token is present, the user's authorities are loaded from
+ * the database and stored in the security context for the rest of the
+ * request processing.</p>
+ */
 @Component
 public class JwtAuthenticationFilter
         extends OncePerRequestFilter {
@@ -23,6 +30,12 @@ public class JwtAuthenticationFilter
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
 
+    /**
+     * Creates the JWT filter.
+     *
+     * @param jwtService           JWT creation and validation
+     * @param userDetailsService   loads the user details for a token subject
+     */
     public JwtAuthenticationFilter(
             JwtService jwtService,
             CustomUserDetailsService userDetailsService
@@ -31,6 +44,14 @@ public class JwtAuthenticationFilter
         this.userDetailsService = userDetailsService;
     }
 
+    /**
+     * Extracts and validates the bearer token, then populates the security
+     * context when successful.
+     *
+     * @param request     the HTTP request
+     * @param response    the HTTP response
+     * @param filterChain the remaining filter chain
+     */
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,

@@ -12,12 +12,24 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Business logic for managing user categories.
+ *
+ * <p>All operations are scoped to the currently authenticated user, so
+ * users can never read, modify or delete categories they do not own.</p>
+ */
 @Service
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CurrentUserService currentUserService;
 
+    /**
+     * Creates the category service.
+     *
+     * @param categoryRepository repository for category persistence
+     * @param currentUserService resolves the authenticated user
+     */
     public CategoryService(
             CategoryRepository categoryRepository,
             CurrentUserService currentUserService
@@ -26,6 +38,11 @@ public class CategoryService {
         this.currentUserService = currentUserService;
     }
 
+    /**
+     * Returns all categories of the current user.
+     *
+     * @return the user categories
+     */
     public List<CategoryResponse> findAll() {
 
         User user =
@@ -38,6 +55,12 @@ public class CategoryService {
                 .toList();
     }
 
+    /**
+     * Returns a page of categories of the current user.
+     *
+     * @param pageable pagination information
+     * @return a page of categories
+     */
     public Page<CategoryResponse> findAllPaginated(Pageable pageable) {
 
         User user =
@@ -48,6 +71,12 @@ public class CategoryService {
                 .map(this::toResponse);
     }
 
+    /**
+     * Creates a new category owned by the current user.
+     *
+     * @param request the category data
+     * @return the created category
+     */
     public CategoryResponse create(
             CreateCategoryRequest request
     ) {
@@ -67,6 +96,13 @@ public class CategoryService {
         return toResponse(savedCategory);
     }
 
+    /**
+     * Deletes a category of the current user.
+     *
+     * @param id the category ID
+     * @throws ResourceNotFoundException if the category does not exist
+     * @throws IllegalArgumentException  if the category belongs to another user
+     */
     public void delete(Long id) {
 
         User user =
@@ -80,10 +116,10 @@ public class CategoryService {
                         );
 
         /*
-         * IMPORTANTE:
+         * IMPORTANT:
          *
-         * No permitimos borrar categorías
-         * de otro usuario.
+         * Deleting categories that belong
+         * to another user is not allowed.
          */
 
         if (!category.getUser()
@@ -98,6 +134,12 @@ public class CategoryService {
         categoryRepository.delete(category);
     }
 
+    /**
+     * Maps a category entity to its public response.
+     *
+     * @param category the entity to map
+     * @return the response DTO
+     */
     private CategoryResponse toResponse(
             Category category
     ) {

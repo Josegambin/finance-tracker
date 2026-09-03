@@ -11,12 +11,25 @@ import finance_tracker_api.repository.RefreshTokenRepository;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Creates, validates and revokes refresh tokens.
+ *
+ * <p>Only one active refresh token is kept per user: creating a new token
+ * revokes the previous ones. Expired tokens are removed when they are
+ * verified.</p>
+ */
 @Service
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final long refreshTokenExpirationMs;
 
+    /**
+     * Creates the refresh token service.
+     *
+     * @param refreshTokenRepository    repository for refresh token persistence
+     * @param refreshTokenExpirationMs  token lifetime in milliseconds
+     */
     public RefreshTokenService(
             RefreshTokenRepository refreshTokenRepository,
             @Value("${security.jwt.refresh-expiration}") long refreshTokenExpirationMs
@@ -25,6 +38,12 @@ public class RefreshTokenService {
         this.refreshTokenExpirationMs = refreshTokenExpirationMs;
     }
 
+    /**
+     * Issues a new refresh token for a user, revoking any previous one.
+     *
+     * @param user the user the token belongs to
+     * @return the generated token string
+     */
     @Transactional
     public String createRefreshToken(User user) {
         // Delete existing refresh tokens for user
@@ -39,6 +58,13 @@ public class RefreshTokenService {
         return token;
     }
 
+    /**
+     * Validates a refresh token and returns it.
+     *
+     * @param token the token value to verify
+     * @return the stored refresh token entity
+     * @throws IllegalArgumentException if the token is unknown or expired
+     */
     @Transactional
     public RefreshToken verifyRefreshToken(String token) {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
@@ -52,6 +78,12 @@ public class RefreshTokenService {
         return refreshToken;
     }
 
+    /**
+     * Revokes a specific refresh token.
+     *
+     * @param token the token value to revoke
+     * @throws IllegalArgumentException if the token is unknown
+     */
     @Transactional
     public void deleteRefreshToken(String token) {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
