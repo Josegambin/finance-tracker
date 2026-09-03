@@ -5,7 +5,7 @@ import {
     Tooltip,
     Legend,
     ResponsiveContainer
-} from 'recharts';
+} from "recharts";
 
 interface ExpenseCategory {
     categoryName: string;
@@ -24,11 +24,15 @@ export default function ExpensesByCategoryChart({
 
         return (
             <div className="chart-empty">
-                <span>📊</span>
+
+                <span>
+                    📊
+                </span>
 
                 <p>
                     No expense data available.
                 </p>
+
             </div>
         );
     }
@@ -38,10 +42,10 @@ export default function ExpensesByCategoryChart({
     ) => {
 
         return new Intl.NumberFormat(
-            'es-ES',
+            "es-ES",
             {
-                style: 'currency',
-                currency: 'EUR'
+                style: "currency",
+                currency: "EUR"
             }
         ).format(value);
     };

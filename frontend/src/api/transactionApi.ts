@@ -3,9 +3,8 @@ import type {
   CreateTransactionRequest,
   TransactionPageResponse
 } from '../types/transaction';
-
-const API_URL =
-  'http://localhost:8080/api';
+import { errorHandler } from '../services/errorHandler';
+import { apiFetch } from '../services/apiClient';
 
 function getHeaders(): HeadersInit {
 
@@ -31,19 +30,16 @@ export async function getTransactions(
 ): Promise<TransactionPageResponse> {
 
   const response =
-    await fetch(
-      `${API_URL}/transactions?page=${page}&size=${size}&sort=${sort}`,
+    await apiFetch(
+      `/transactions?page=${page}&size=${size}&sort=${sort}`,
       {
         headers: getHeaders()
       }
     );
 
   if (!response.ok) {
-
-    throw new Error(
-      'Error loading transactions'
-    );
-
+    const error = await errorHandler.parseApiError(response);
+    throw errorHandler.handle(error);
   }
 
   return response.json();
@@ -55,8 +51,8 @@ export async function createTransaction(
 ): Promise<Transaction> {
 
   const response =
-    await fetch(
-      `${API_URL}/transactions`,
+    await apiFetch(
+      `/transactions`,
       {
 
         method: 'POST',
@@ -69,11 +65,8 @@ export async function createTransaction(
     );
 
   if (!response.ok) {
-
-    throw new Error(
-      'Error creating transaction'
-    );
-
+    const error = await errorHandler.parseApiError(response);
+    throw errorHandler.handle(error);
   }
 
   return response.json();
@@ -85,8 +78,8 @@ export async function deleteTransaction(
 ): Promise<void> {
 
   const response =
-    await fetch(
-      `${API_URL}/transactions/${id}`,
+    await apiFetch(
+      `/transactions/${id}`,
       {
 
         method: 'DELETE',
@@ -97,11 +90,8 @@ export async function deleteTransaction(
     );
 
   if (!response.ok) {
-
-    throw new Error(
-      'Error deleting transaction'
-    );
-
+    const error = await errorHandler.parseApiError(response);
+    throw errorHandler.handle(error);
   }
 
 }
@@ -198,12 +188,12 @@ export async function exportTransactionsCsv(
 
   const url =
     query.length > 0
-      ? `${API_URL}/transactions/export/csv?${query}`
-      : `${API_URL}/transactions/export/csv`;
+      ? `/transactions/export/csv?${query}`
+      : `/transactions/export/csv`;
 
 
   const response =
-    await fetch(
+    await apiFetch(
       url,
       {
         headers: getHeaders()
@@ -212,11 +202,8 @@ export async function exportTransactionsCsv(
 
 
   if (!response.ok) {
-
-    throw new Error(
-      'Error exporting transactions'
-    );
-
+    const error = await errorHandler.parseApiError(response);
+    throw errorHandler.handle(error);
   }
 
 

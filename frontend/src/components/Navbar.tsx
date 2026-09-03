@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Navbar() {
+
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <nav className="navbar">
@@ -40,20 +43,30 @@ export default function Navbar() {
 
         </div>
 
-        <button
-          className="navbar-logout"
-          onClick={() => {
+        <div className="navbar-actions">
+          <button
+            className="theme-toggle"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+          >
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
 
-            localStorage.removeItem(
-              'finance_tracker_token'
-            );
+          <button
+            className="navbar-logout"
+            onClick={() => {
 
-            window.location.href = '/login';
+              localStorage.removeItem(
+                'finance_tracker_token'
+              );
 
-          }}
-        >
-          Logout
-        </button>
+              window.location.href = '/login';
+
+            }}
+          >
+            Logout
+          </button>
+        </div>
 
       </div>
 

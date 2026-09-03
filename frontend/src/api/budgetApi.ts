@@ -1,106 +1,43 @@
-import type {
-  Budget,
-  CreateBudgetRequest
-} from '../types/budget';
+// src/api/budgetApi.ts
+import { apiFetch } from '../services/apiClient';
+import type { Budget, CreateBudgetRequest } from '../types/budget';
 
 const API_URL = 'http://localhost:8080/api';
 
-function getHeaders(): HeadersInit {
-
-  const token =
-    localStorage.getItem(
-      'finance_tracker_token'
-    );
-
-  return {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`
-  };
-}
-
-
-export async function getBudgets():
-  Promise<Budget[]> {
-
-  const response =
-    await fetch(
-      `${API_URL}/budgets`,
-      {
-        headers: getHeaders()
-      }
-    );
+export async function getBudgets(): Promise<Budget[]> {
+  // ✅ Usa apiFetch. Asegúrate de que la URL sea correcta.
+  const response = await apiFetch('/budgets'); 
 
   if (!response.ok) {
-    throw new Error(
-      'Error loading budgets'
-    );
+    // Si el backend devuelve un JSON, lo leemos. Si devuelve HTML, lanzamos error genérico.
+    const text = await response.text();
+    throw new Error(`Error ${response.status}: ${text.slice(0, 100)}`);
   }
 
   return response.json();
 }
 
-export async function createBudget(
-  request: CreateBudgetRequest
-): Promise<Budget> {
-
-  const response =
-    await fetch(
-      `${API_URL}/budgets`,
-      {
-        method: 'POST',
-
-        headers: getHeaders(),
-
-        body: JSON.stringify(request)
-      }
-    );
+export async function createBudget(request: CreateBudgetRequest): Promise<Budget> {
+  const response = await apiFetch('/budgets', {
+    method: 'POST',
+    body: JSON.stringify(request)
+  });
 
   if (!response.ok) {
-    throw new Error(
-      'Error creating budget'
-    );
+    const text = await response.text();
+    throw new Error(`Error ${response.status}: ${text.slice(0, 100)}`);
   }
 
   return response.json();
 }
 
-export async function deleteBudget(
-  id: number
-): Promise<void> {
-
-  const response =
-    await fetch(
-      `${API_URL}/budgets/${id}`,
-      {
-        method: 'DELETE',
-        headers: getHeaders()
-      }
-    );
+export async function deleteBudget(id: number): Promise<void> {
+  const response = await apiFetch(`/budgets/${id}`, {
+    method: 'DELETE'
+  });
 
   if (!response.ok) {
-    throw new Error(
-      'Error deleting budget'
-    );
+    const text = await response.text();
+    throw new Error(`Error ${response.status}: ${text.slice(0, 100)}`);
   }
 }
-
-export async function getBudgetsByMonth(
-  month: string
-): Promise<Budget[]> {
-
-  const response = await fetch(
-    `${API_URL}/budgets/by-month?month=${month}`,
-    {
-      headers: getHeaders()
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error(
-      'Error loading budgets'
-    );
-  }
-
-  return response.json();
-}
-

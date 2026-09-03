@@ -1,21 +1,58 @@
- 
 services:
 
   postgres:
     image: postgres:18
-
     container_name: finance-tracker-db
-
     environment:
       POSTGRES_DB: finance_tracker
       POSTGRES_USER: finance_user
       POSTGRES_PASSWORD: finance_password
-
     ports:
       - "5432:5432"
-
     volumes:
       - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U finance_user -d finance_tracker"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: finance-tracker-backend
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/finance_tracker
+      DB_USERNAME: finance_user
+      DB_PASSWORD: finance_password
+      JWT_SECRET: ${JWT_SECRET:-change-this-secret-key-to-a-long-random-value-123456789}
+      JWT_EXPIRATION: 3600000
+      JWT_REFRESH_EXPIRATION: 604800000
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - finance-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: finance-tracker-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - finance-network
 
 volumes:
   postgres_data:
+
+networks:
+  finance-network:
+    driver: bridge

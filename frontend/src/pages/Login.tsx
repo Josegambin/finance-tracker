@@ -41,7 +41,8 @@ export default function Login() {
 
       const data = await login(form);
 
-      saveToken(data.token);
+      // ✅ CORREGIDO: Guardamos accessToken y refreshToken
+      saveToken(data.accessToken, data.refreshToken);
 
       navigate('/dashboard');
 

@@ -1,15 +1,18 @@
 package finance_tracker_api.service;
 
-import org.springframework.stereotype.Service;
 import finance_tracker_api.dto.budget.BudgetResponse;
 import finance_tracker_api.dto.budget.CreateBudgetRequest;
 import finance_tracker_api.entity.Budget;
 import finance_tracker_api.entity.Category;
 import finance_tracker_api.entity.CategoryType;
 import finance_tracker_api.entity.User;
+import finance_tracker_api.exception.ResourceNotFoundException;
 import finance_tracker_api.repository.BudgetRepository;
 import finance_tracker_api.repository.CategoryRepository;
 import finance_tracker_api.repository.TransactionRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -51,8 +54,7 @@ public class BudgetService {
                                 .findById(
                                                 request.categoryId())
                                 .orElseThrow(
-                                                () -> new RuntimeException(
-                                                                "Category not found"));
+                                                () -> new ResourceNotFoundException("Category", request.categoryId()));
 
                 /*
                  * Seguridad:
@@ -64,7 +66,7 @@ public class BudgetService {
                                 .getId()
                                 .equals(user.getId())) {
 
-                        throw new RuntimeException(
+                        throw new IllegalArgumentException(
                                         "You cannot use this category");
                 }
 
@@ -75,7 +77,7 @@ public class BudgetService {
 
                 if (category.getType() != CategoryType.EXPENSE) {
 
-                        throw new RuntimeException(
+                        throw new IllegalArgumentException(
                                         "Budgets can only be created for expense categories");
                 }
 
@@ -95,7 +97,7 @@ public class BudgetService {
 
                 if (budgetExists) {
 
-                        throw new RuntimeException(
+                        throw new IllegalArgumentException(
                                         "A budget already exists for this category and month");
                 }
 
@@ -112,17 +114,13 @@ public class BudgetService {
                                 savedBudget);
         }
 
-        public List<BudgetResponse> getBudgets() {
+        public Page<BudgetResponse> getBudgets(Pageable pageable) {
 
                 User user = currentUserService.getCurrentUser();
 
                 return budgetRepository
-                                .findByUserIdOrderByMonthDesc(
-                                                user.getId())
-                                .stream()
-                                .map(
-                                                this::toBudgetResponse)
-                                .toList();
+                                .findByUserId(user.getId(), pageable)
+                                .map(this::toBudgetResponse);
         }
 
         public List<BudgetResponse> getBudgets(YearMonth month) {
@@ -146,8 +144,7 @@ public class BudgetService {
                 Budget budget = budgetRepository
                                 .findById(id)
                                 .orElseThrow(
-                                                () -> new RuntimeException(
-                                                                "Budget not found"));
+                                                () -> new ResourceNotFoundException("Budget", id));
 
                 /*
                  * Seguridad:

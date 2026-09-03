@@ -4,6 +4,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import finance_tracker_api.dto.auth.LoginRequest;
 import finance_tracker_api.dto.auth.LoginResponse;
@@ -19,19 +20,23 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         AuthenticationManager authenticationManager,
-        JwtService jwtService
+        JwtService jwtService,
+        RefreshTokenService refreshTokenService
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.refreshTokenService = refreshTokenService;
     }
 
+    @Transactional
     public UserResponse register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.email())) {
@@ -58,6 +63,7 @@ public class AuthService {
         );
     }
 
+    @Transactional
     public LoginResponse login(LoginRequest request) {
 
         authenticationManager.authenticate(
@@ -67,9 +73,15 @@ public class AuthService {
                 )
         );
 
-        String token =
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        String accessToken =
                 jwtService.generateToken(request.email());
 
-        return new LoginResponse(token);
+        String refreshToken =
+                refreshTokenService.createRefreshToken(user);
+
+        return new LoginResponse(accessToken, refreshToken);
     }
 }

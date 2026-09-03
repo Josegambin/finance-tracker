@@ -4,15 +4,16 @@ import type {
   RegisterRequest,
   User
 } from '../types/auth';
+import { errorHandler } from '../services/errorHandler';
+import { apiFetch } from '../services/apiClient';
 
-const API_URL = 'http://localhost:8080/api';
 
 export async function login(
   request: LoginRequest
 ): Promise<LoginResponse> {
 
-  const response = await fetch(
-    `${API_URL}/auth/login`,
+  const response = await apiFetch(
+    `/auth/login`,
     {
       method: 'POST',
 
@@ -25,9 +26,8 @@ export async function login(
   );
 
   if (!response.ok) {
-    throw new Error(
-      'Invalid email or password'
-    );
+    const error = await errorHandler.parseApiError(response);
+    throw errorHandler.handle(error);
   }
 
   return response.json();
@@ -37,8 +37,8 @@ export async function register(
   request: RegisterRequest
 ): Promise<User> {
 
-  const response = await fetch(
-    `${API_URL}/auth/register`,
+  const response = await apiFetch(
+    `/auth/register`,
     {
       method: 'POST',
 
@@ -51,13 +51,57 @@ export async function register(
   );
 
   if (!response.ok) {
-
-    const error = await response.text();
-
-    throw new Error(
-      error || 'Error creating user'
-    );
+    const error = await errorHandler.parseApiError(response);
+    throw errorHandler.handle(error);
   }
 
   return response.json();
+}
+
+export async function refreshToken(
+  refreshToken: string
+): Promise<LoginResponse> {
+
+  const response = await apiFetch(
+    `/auth/refresh`,
+    {
+      method: 'POST',
+
+      headers: {
+        'Content-Type': 'application/json'
+      },
+
+      body: JSON.stringify({ refreshToken })
+    }
+  );
+
+  if (!response.ok) {
+    const error = await errorHandler.parseApiError(response);
+    throw errorHandler.handle(error);
+  }
+
+  return response.json();
+}
+
+export async function logout(
+  refreshToken: string
+): Promise<void> {
+
+  const response = await apiFetch(
+    `/auth/logout`,
+    {
+      method: 'POST',
+
+      headers: {
+        'Content-Type': 'application/json'
+      },
+
+      body: JSON.stringify({ refreshToken })
+    }
+  );
+
+  if (!response.ok) {
+    const error = await errorHandler.parseApiError(response);
+    throw errorHandler.handle(error);
+  }
 }

@@ -10,15 +10,10 @@ import Register from './pages/Register';
 import Dashboard from './pages/DashboardPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import CategoriesPage from './pages/CategoriesPage';
-import type { Category } from './types/category';
-import { useState } from 'react';
 import TransactionsPage from './pages/TransationPage';
 import BudgetsPage from './pages/BudgetsPage';
 
 function App() {
-
-  const [categories, setCategories] = useState<Category[]>([]);
-  const handleDelete = async (id: number) => { /* ... */ };
   return (
     <BrowserRouter>
 
@@ -85,7 +80,7 @@ function App() {
             />
           }
         />
-    
+
       </Routes>
 
     </BrowserRouter>

@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 
-import { getDashboard, getExpensesByCategory } from "../api/dashboardApi";
+import {
+  getBudgetsByMonth,
+  getDashboard,
+  getExpensesByCategory,
+} from "../api/dashboardApi";
 
 import Navbar from "../components/Navbar";
 
@@ -18,56 +22,109 @@ import type { BudgetVsSpentData } from "../components/charts/BudgetVsSpentChart"
 
 import BudgetVsSpentChart from "../components/charts/BudgetVsSpentChart";
 
-import { getBudgetsByMonth } from "../api/budgetApi";
 
 export default function Dashboard() {
+
   // =========================
   // DASHBOARD
   // =========================
 
-  const [dashboard, setDashboard] = useState<Dashboard | null>(null);
+  const [
+    dashboard,
+    setDashboard
+  ] = useState<Dashboard | null>(null);
 
   // =========================
   // LOADING
   // =========================
 
-  const [loading, setLoading] = useState(true);
+  const [
+    loading,
+    setLoading
+  ] = useState(true);
 
   // =========================
   // ERROR
   // =========================
 
-  const [error, setError] = useState<string | null>(null);
+  const [
+    error,
+    setError
+  ] = useState<string | null>(null);
 
   // =========================
   // EXPENSES BY CATEGORY
   // =========================
 
-  const [expensesByCategory, setExpensesByCategory] = useState<
-    ExpenseByCategory[]
-  >([]);
+  const [
+    expensesByCategory,
+    setExpensesByCategory
+  ] = useState<ExpenseByCategory[]>([]);
 
   // =========================
   // BUDGET VS SPENT
   // =========================
 
-  const [budgetVsSpent, setBudgetVsSpent] = useState<BudgetVsSpentData[]>([]);
+  const [
+    budgetVsSpent,
+    setBudgetVsSpent
+  ] = useState<BudgetVsSpentData[]>([]);
 
   // =========================
   // SELECTED MONTH
   // =========================
 
-  const [selectedMonth, setSelectedMonth] = useState("2026-08");
+  const [
+    selectedMonth,
+    setSelectedMonth
+  ] = useState("2026-09");
+
+  // =========================
+  // MONTHS
+  // =========================
+
+  const months = [
+    {
+      value: "2026-09",
+      label: "September 2026",
+    },
+    {
+      value: "2026-08",
+      label: "August 2026",
+    },
+    {
+      value: "2026-07",
+      label: "July 2026",
+    },
+    {
+      value: "2026-06",
+      label: "June 2026",
+    },
+    {
+      value: "2026-05",
+      label: "May 2026",
+    },
+    {
+      value: "2026-04",
+      label: "April 2026",
+    },
+  ];
 
   // =========================
   // CURRENCY FORMAT
   // =========================
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("es-ES", {
-      style: "currency",
-      currency: "EUR",
-    }).format(value);
+  const formatCurrency = (
+    value: number
+  ) => {
+
+    return new Intl.NumberFormat(
+      "es-ES",
+      {
+        style: "currency",
+        currency: "EUR",
+      }
+    ).format(value);
   };
 
   // =========================
@@ -75,66 +132,166 @@ export default function Dashboard() {
   // =========================
 
   const loadDashboard = async () => {
+
     try {
+
       setLoading(true);
 
       setError(null);
 
-      const [dashboardData, categoryData, budgetsData] = await Promise.all([
-        getDashboard(selectedMonth),
+      const [
+        dashboardData,
+        categoryData,
+        budgetsData
+      ] = await Promise.all([
 
-        getExpensesByCategory(selectedMonth),
+        getDashboard(
+          selectedMonth
+        ),
 
-        getBudgetsByMonth(selectedMonth),
+        getExpensesByCategory(
+          selectedMonth
+        ),
+
+        getBudgetsByMonth(
+          selectedMonth
+        ),
+
       ]);
 
-      // Dashboard
+      // =========================
+      // DASHBOARD
+      // =========================
 
-      setDashboard(dashboardData);
+      setDashboard(
+        dashboardData
+      );
 
-      // Expenses by category
+      // =========================
+      // EXPENSES BY CATEGORY
+      // =========================
 
-      setExpensesByCategory(categoryData);
+      setExpensesByCategory(
+        categoryData
+      );
 
-      // Budgets
+      // =========================
+      // BUDGET VS SPENT
+      // =========================
 
       setBudgetVsSpent(
-        budgetsData.map((budget) => ({
-          name: budget.categoryName,
 
-          budget: budget.budgetAmount,
+        budgetsData.map(
+          (budget) => ({
 
-          spent: budget.spentAmount,
-        })),
+            name:
+              budget.categoryName,
+
+            budget:
+              budget.budgetAmount,
+
+            spent:
+              budget.spentAmount,
+
+          })
+        )
+
       );
+
     } catch (error) {
+
       console.error(error);
 
-      setError("Error loading dashboard");
+      setError(
+        "Error loading dashboard"
+      );
+
     } finally {
+
       setLoading(false);
+
     }
   };
 
   // =========================
-  // INITIAL LOAD
+  // LOAD WHEN MONTH CHANGES
   // =========================
 
   useEffect(() => {
+
     loadDashboard();
+
   }, [selectedMonth]);
+
+  // =========================
+  // LOADING VIEW
+  // =========================
+
+  if (
+    loading &&
+    !dashboard
+  ) {
+
+    return (
+      <>
+        <Navbar />
+
+        <main className="page-container">
+
+          <div className="dashboard-loading">
+
+            <div className="loading-spinner"></div>
+
+            <p>
+              Loading dashboard...
+            </p>
+
+          </div>
+
+        </main>
+      </>
+    );
+  }
 
   // =========================
   // ERROR VIEW
   // =========================
 
   if (error) {
+
     return (
       <>
         <Navbar />
 
         <main className="page-container">
-          <div className="error-message">{error}</div>
+
+          <div className="dashboard-error">
+
+            <span>
+              ⚠️
+            </span>
+
+            <div>
+
+              <strong>
+                Unable to load dashboard
+              </strong>
+
+              <p>
+                Please try again.
+              </p>
+
+              <button
+                type="button"
+                onClick={loadDashboard}
+              >
+                Retry
+              </button>
+
+            </div>
+
+          </div>
+
         </main>
       </>
     );
@@ -145,7 +302,9 @@ export default function Dashboard() {
   // =========================
 
   if (!dashboard) {
+
     return null;
+
   }
 
   // =========================
@@ -153,42 +312,85 @@ export default function Dashboard() {
   // =========================
 
   return (
+
     <>
       <Navbar />
 
       <main className="page-container">
+
+        {/* =========================
+            REFRESHING
+        ========================= */}
+
+        {loading && (
+
+          <div className="dashboard-refreshing">
+
+            Updating dashboard...
+
+          </div>
+
+        )}
+
         {/* =========================
             HEADER
         ========================= */}
 
         <div className="page-header">
-          <div>
-            <p className="eyebrow">FINANCE OVERVIEW</p>
 
-            <h1>Dashboard</h1>
+          <div>
+
+            <p className="eyebrow">
+              FINANCE OVERVIEW
+            </p>
+
+            <h1>
+              Dashboard
+            </h1>
 
             <p className="page-description">
               Here's an overview of your finances.
             </p>
 
-            {/* MONTH SELECTOR */}
+            {/* =========================
+                MONTH SELECTOR
+            ========================= */}
 
             <div className="month-selector">
-              <label htmlFor="month">Month</label>
+
+              <label htmlFor="month">
+                Month
+              </label>
 
               <select
                 id="month"
                 value={selectedMonth}
-                onChange={(event) => setSelectedMonth(event.target.value)}
+                onChange={(event) =>
+                  setSelectedMonth(
+                    event.target.value
+                  )
+                }
               >
-                <option value="2026-09">September 2026</option>
 
-                <option value="2026-08">August 2026</option>
+                {months.map(
+                  (month) => (
 
-                <option value="2026-04">April 2026</option>
+                    <option
+                      key={month.value}
+                      value={month.value}
+                    >
+                      {month.label}
+                    </option>
+
+                  )
+                )}
+
               </select>
+
             </div>
+
           </div>
+
         </div>
 
         {/* =========================
@@ -196,26 +398,34 @@ export default function Dashboard() {
         ========================= */}
 
         <section className="dashboard-grid">
+
           <DashboardCard
             title="Total balance"
-            value={formatCurrency(dashboard.balance)}
+            value={formatCurrency(
+              dashboard.balance
+            )}
             icon="💰"
             type="balance"
           />
 
           <DashboardCard
             title="Total income"
-            value={formatCurrency(dashboard.totalIncome)}
+            value={formatCurrency(
+              dashboard.totalIncome
+            )}
             icon="↗"
             type="income"
           />
 
           <DashboardCard
             title="Total expenses"
-            value={formatCurrency(dashboard.totalExpenses)}
+            value={formatCurrency(
+              dashboard.totalExpenses
+            )}
             icon="↘"
             type="expense"
           />
+
         </section>
 
         {/* =========================
@@ -223,13 +433,23 @@ export default function Dashboard() {
         ========================= */}
 
         <section className="dashboard-chart-card">
-          <div className="chart-header">
-            <h2>Expenses by category</h2>
 
-            <p>Where your money is going.</p>
+          <div className="chart-header">
+
+            <h2>
+              Expenses by category
+            </h2>
+
+            <p>
+              Where your money is going.
+            </p>
+
           </div>
 
-          <ExpensesByCategoryChart data={expensesByCategory} />
+          <ExpensesByCategoryChart
+            data={expensesByCategory}
+          />
+
         </section>
 
         {/* =========================
@@ -237,13 +457,23 @@ export default function Dashboard() {
         ========================= */}
 
         <section className="dashboard-chart-card">
-          <div className="chart-header">
-            <h2>Budget vs spent</h2>
 
-            <p>Compare your budget with your actual spending.</p>
+          <div className="chart-header">
+
+            <h2>
+              Budget vs spent
+            </h2>
+
+            <p>
+              Compare your budget with your actual spending.
+            </p>
+
           </div>
 
-          <BudgetVsSpentChart data={budgetVsSpent} />
+          <BudgetVsSpentChart
+            data={budgetVsSpent}
+          />
+
         </section>
 
         {/* =========================
@@ -251,16 +481,31 @@ export default function Dashboard() {
         ========================= */}
 
         <section className="content-card">
-          <div className="section-header">
-            <div>
-              <h2>Recent transactions</h2>
 
-              <p>Your latest financial activity.</p>
+          <div className="section-header">
+
+            <div>
+
+              <h2>
+                Recent transactions
+              </h2>
+
+              <p>
+                Your latest financial activity.
+              </p>
+
             </div>
+
           </div>
 
-          <RecentTransactions transactions={dashboard.recentTransactions} />
+          <RecentTransactions
+            transactions={
+              dashboard.recentTransactions
+            }
+          />
+
         </section>
+
       </main>
     </>
   );

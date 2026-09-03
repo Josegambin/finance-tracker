@@ -1,12 +1,14 @@
 package finance_tracker_api.controller;
 
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-
 import finance_tracker_api.dto.CategoryResponse;
 import finance_tracker_api.dto.CreateCategoryRequest;
 import finance_tracker_api.service.CategoryService;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,6 +28,13 @@ public class CategoryController {
     public List<CategoryResponse> findAll() {
 
         return categoryService.findAll();
+    }
+
+    @GetMapping("/paginated")
+    public Page<CategoryResponse> findAllPaginated(
+            @PageableDefault(size = 20) Pageable pageable
+    ) {
+        return categoryService.findAllPaginated(pageable);
     }
 
     @PostMapping

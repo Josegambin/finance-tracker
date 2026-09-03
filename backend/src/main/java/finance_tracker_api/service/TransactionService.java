@@ -8,6 +8,7 @@ import finance_tracker_api.entity.Transaction;
 import finance_tracker_api.entity.TransactionType;
 import finance_tracker_api.entity.User;
 import finance_tracker_api.exception.InvalidRequestException;
+import finance_tracker_api.exception.ResourceNotFoundException;
 import finance_tracker_api.repository.CategoryRepository;
 import finance_tracker_api.repository.TransactionRepository;
 import finance_tracker_api.specification.TransactionSpecification;
@@ -131,8 +132,7 @@ public class TransactionService {
 
                 Category category = categoryRepository
                                 .findById(request.categoryId())
-                                .orElseThrow(() -> new RuntimeException(
-                                                "Category not found"));
+                                .orElseThrow(() -> new ResourceNotFoundException("Category", request.categoryId()));
 
                 /*
                  * Seguridad:
@@ -145,7 +145,7 @@ public class TransactionService {
                                 .getId()
                                 .equals(user.getId())) {
 
-                        throw new RuntimeException(
+                        throw new IllegalArgumentException(
                                         "You cannot use this category");
                 }
 
@@ -159,7 +159,7 @@ public class TransactionService {
                                 .name()
                                 .equals(request.type().name())) {
 
-                        throw new RuntimeException(
+                        throw new IllegalArgumentException(
                                         "Transaction type does not match category type");
                 }
 
@@ -194,8 +194,7 @@ public class TransactionService {
 
                 Transaction transaction = transactionRepository
                                 .findById(id)
-                                .orElseThrow(() -> new RuntimeException(
-                                                "Transaction not found"));
+                                .orElseThrow(() -> new ResourceNotFoundException("Transaction", id));
 
                 /*
                  * No permitimos eliminar

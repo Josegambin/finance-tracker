@@ -51,18 +51,14 @@ export default function BudgetsPage() {
   const [selectedMonth, setSelectedMonth] =
     useState(currentMonth);
 
-  const availableMonths =
-    [...new Set(
-      budgets.map(
-        budget => budget.month
-      )
-    )].sort().reverse();
+ // En BudgetsPage.tsx, línea 50 aprox:
+const availableMonths = [...new Set(
+  (Array.isArray(budgets) ? budgets : []).map(budget => budget.month) // 👈 Seguridad extra
+)].sort().reverse();
 
-  const filteredBudgets =
-    budgets.filter(
-      budget =>
-        budget.month === selectedMonth
-    );
+  const filteredBudgets = (Array.isArray(budgets) ? budgets : []).filter(
+  budget => budget.month === selectedMonth
+);
 
   const totalBudget =
     filteredBudgets.reduce(

@@ -1,6 +1,9 @@
 package finance_tracker_api.controller;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,9 +35,10 @@ public class BudgetController {
     }
 
     @GetMapping
-    public List<BudgetResponse> getBudgets() {
+    public Page<BudgetResponse> getBudgets(
+            @PageableDefault(size = 20) Pageable pageable) {
 
-        return budgetService.getBudgets();
+        return budgetService.getBudgets(pageable);
     }
 
     @DeleteMapping("/{id}")

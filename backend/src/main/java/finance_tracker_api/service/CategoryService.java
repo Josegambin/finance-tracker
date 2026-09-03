@@ -1,12 +1,14 @@
 package finance_tracker_api.service;
 
-import org.springframework.stereotype.Service;
-
 import finance_tracker_api.dto.CategoryResponse;
 import finance_tracker_api.dto.CreateCategoryRequest;
 import finance_tracker_api.entity.Category;
 import finance_tracker_api.entity.User;
+import finance_tracker_api.exception.ResourceNotFoundException;
 import finance_tracker_api.repository.CategoryRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -34,6 +36,16 @@ public class CategoryService {
                 .stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    public Page<CategoryResponse> findAllPaginated(Pageable pageable) {
+
+        User user =
+                currentUserService.getCurrentUser();
+
+        return categoryRepository
+                .findByUserId(user.getId(), pageable)
+                .map(this::toResponse);
     }
 
     public CategoryResponse create(
@@ -64,9 +76,7 @@ public class CategoryService {
                 categoryRepository
                         .findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Category not found"
-                                )
+                                new ResourceNotFoundException("Category", id)
                         );
 
         /*
@@ -80,7 +90,7 @@ public class CategoryService {
                 .getId()
                 .equals(user.getId())) {
 
-            throw new RuntimeException(
+            throw new IllegalArgumentException(
                     "You cannot delete this category"
             );
         }

@@ -2,8 +2,9 @@ import type {
   Category,
   CreateCategoryRequest
 } from '../types/category';
+import { errorHandler } from '../services/errorHandler';
 
-const API_URL = 'http://localhost:8080/api';
+import { apiFetch } from '../services/apiClient'; // Ajusta la ruta relativa
 
 function getHeaders(): HeadersInit {
 
@@ -22,17 +23,16 @@ export async function getCategories():
   Promise<Category[]> {
 
   const response =
-    await fetch(
-      `${API_URL}/categories`,
+    await apiFetch(
+      `/categories`,
       {
         headers: getHeaders()
       }
     );
 
   if (!response.ok) {
-    throw new Error(
-      'Error loading categories'
-    );
+    const error = await errorHandler.parseApiError(response);
+    throw errorHandler.handle(error);
   }
 
   return response.json();
@@ -43,8 +43,8 @@ export async function createCategory(
 ): Promise<Category> {
 
   const response =
-    await fetch(
-      `${API_URL}/categories`,
+    await apiFetch(
+      `/categories`,
       {
         method: 'POST',
 
@@ -55,9 +55,8 @@ export async function createCategory(
     );
 
   if (!response.ok) {
-    throw new Error(
-      'Error creating category'
-    );
+    const error = await errorHandler.parseApiError(response);
+    throw errorHandler.handle(error);
   }
 
   return response.json();
@@ -68,8 +67,8 @@ export async function deleteCategory(
 ): Promise<void> {
 
   const response =
-    await fetch(
-      `${API_URL}/categories/${id}`,
+    await apiFetch(
+      `/categories/${id}`,
       {
         method: 'DELETE',
 
@@ -78,8 +77,7 @@ export async function deleteCategory(
     );
 
   if (!response.ok) {
-    throw new Error(
-      'Error deleting category'
-    );
+    const error = await errorHandler.parseApiError(response);
+    throw errorHandler.handle(error);
   }
 }

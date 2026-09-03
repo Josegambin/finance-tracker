@@ -3,24 +3,65 @@ spring:
     name: finance-tracker-api
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/finance_tracker
-    username: finance_user
-    password: finance_password
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/finance_tracker}
+    username: ${DB_USERNAME:finance_user}
+    password: ${DB_PASSWORD:finance_password}
 
   jpa:
     hibernate:
       ddl-auto: update
-
-    show-sql: true
-
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: false
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  # Logging Configuration
+  logging:
+    level:
+      root: INFO
+      finance_tracker_api: DEBUG
+      org.springframework.security: DEBUG
+      org.hibernate.SQL: DEBUG
+      org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# OpenAPI/Swagger Configuration
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+
+# Security Configuration
 security:
   jwt:
-    secret: change-this-secret-key-to-a-long-random-value-123456789
-    expiration: 3600000 # 1 hora
+    secret: ${JWT_SECRET:change-this-secret-key-to-a-long-random-value-123456789}
+    expiration: ${JWT_EXPIRATION:3600000} # 1 hora
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000} # 7 días
+
+# Rate Limiting Configuration
+rate-limiting:
+  enabled: true
+  auth-endpoint:
+    capacity: 5
+    refill-tokens: 5
+    refill-duration: 60 # 1 minute
