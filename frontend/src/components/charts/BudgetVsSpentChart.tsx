@@ -9,6 +9,10 @@ import {
   ResponsiveContainer
 } from 'recharts';
 
+import {
+  useTranslation
+} from 'react-i18next';
+
 export interface BudgetVsSpentData {
   name: string;
   budget: number;
@@ -23,6 +27,10 @@ export default function BudgetVsSpentChart({
   data
 }: BudgetVsSpentChartProps) {
 
+  const {
+    t
+  } = useTranslation();
+
   if (!data || data.length === 0) {
 
     return (
@@ -31,7 +39,7 @@ export default function BudgetVsSpentChart({
         <span>📊</span>
 
         <p>
-          No budget data available.
+          {t('dashboard.noBudgetData')}
         </p>
 
       </div>
@@ -77,8 +85,8 @@ export default function BudgetVsSpentChart({
             formatter={(value, name) => [
               `${Number(value).toFixed(2)} €`,
               name === 'budget'
-                ? 'Budget'
-                : 'Spent'
+                ? t('dashboard.budget')
+                : t('dashboard.spent')
             ]}
           />
 
@@ -86,14 +94,14 @@ export default function BudgetVsSpentChart({
 
           <Bar
             dataKey="budget"
-            name="Budget"
+            name={t('dashboard.budget')}
             fill="#3b82f6"
             radius={[6, 6, 0, 0]}
           />
 
           <Bar
             dataKey="spent"
-            name="Spent"
+            name={t('dashboard.spent')}
             fill="#f97316"
             radius={[6, 6, 0, 0]}
           />

@@ -116,6 +116,12 @@ const es = {
       clearFilters:
         'Limpiar filtros',
 
+      exportCsv:
+        'Exportar CSV',
+
+      exporting:
+        'Exportando...',
+
       previous:
         'Anterior',
 
@@ -197,6 +203,15 @@ const es = {
 
       budgetVsSpent:
         'Presupuesto vs gastado',
+
+      budget:
+        'Presupuesto',
+
+      spent:
+        'Gastado',
+
+      noBudgetData:
+        'No hay presupuestos para este mes.',
 
       budgetVsSpentDescription:
         'Compara tu presupuesto con el gasto real.',
