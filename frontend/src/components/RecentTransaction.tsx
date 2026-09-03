@@ -1,6 +1,5 @@
-import type {
-  Transaction
-} from '../types/transaction';
+import { useTranslation } from 'react-i18next';
+import type { Transaction } from '../types/transaction';
 
 interface RecentTransactionsProps {
   transactions: Transaction[];
@@ -9,6 +8,8 @@ interface RecentTransactionsProps {
 export default function RecentTransactions({
   transactions
 }: RecentTransactionsProps) {
+
+  const { t } = useTranslation();
 
   if (transactions.length === 0) {
 
@@ -21,12 +22,11 @@ export default function RecentTransactions({
         </span>
 
         <h3>
-          No transactions yet
+          {t('transactions.noTransactions')}
         </h3>
 
         <p>
-          Add your first transaction
-          to see your financial summary.
+          {t('transactions.noTransactionsDescription')}
         </p>
 
       </div>

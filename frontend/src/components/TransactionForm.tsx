@@ -2,6 +2,7 @@ import {
   useEffect,
   useState
 } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type {
   Category
@@ -23,6 +24,8 @@ export default function TransactionForm({
   categories,
   onCreate
 }: TransactionFormProps) {
+
+  const { t } = useTranslation();
 
   const [description, setDescription] =
     useState('');
@@ -120,7 +123,7 @@ export default function TransactionForm({
       <div className="form-group description-field">
 
         <label>
-          Description
+          {t('transactions.description')}
         </label>
 
         <input
@@ -140,7 +143,7 @@ export default function TransactionForm({
       <div className="form-group amount-field">
 
         <label>
-          Amount
+          {t('transactions.amount')}
         </label>
 
         <input
@@ -162,7 +165,7 @@ export default function TransactionForm({
       <div className="form-group date-field">
 
         <label>
-          Date
+          {t('transactions.date')}
         </label>
 
         <input
@@ -181,7 +184,7 @@ export default function TransactionForm({
       <div className="form-group">
 
         <label>
-          Type
+          {t('transactions.type')}
         </label>
 
         <select
@@ -194,11 +197,11 @@ export default function TransactionForm({
         >
 
           <option value="EXPENSE">
-            Expense
+            {t('transactions.expense')}
           </option>
 
           <option value="INCOME">
-            Income
+            {t('transactions.income')}
           </option>
 
         </select>
@@ -208,7 +211,7 @@ export default function TransactionForm({
       <div className="form-group category-field">
 
         <label>
-          Category
+          {t('transactions.category')}
         </label>
 
         <select
@@ -225,7 +228,7 @@ export default function TransactionForm({
 
           {filteredCategories.length === 0 && (
             <option value="">
-              No categories available
+              {t('transactions.noCategoriesAvailable')}
             </option>
           )}
 
@@ -256,8 +259,8 @@ export default function TransactionForm({
       >
 
         {loading
-          ? 'Adding...'
-          : '+ Add transaction'}
+          ? t('common.loading')
+          : t('transactions.addTransaction')}
 
       </button>
 

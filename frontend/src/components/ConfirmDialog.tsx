@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -15,12 +16,13 @@ export default function ConfirmDialog({
   isOpen,
   title,
   message,
-  confirmText = 'Confirmar',
-  cancelText = 'Cancelar',
+  confirmText,
+  cancelText,
   onConfirm,
   onCancel,
   type = 'danger'
 }: ConfirmDialogProps) {
+  const { t } = useTranslation();
   const [isClosing, setIsClosing] = useState(false);
 
   if (!isOpen) return null;
@@ -68,13 +70,13 @@ export default function ConfirmDialog({
             onClick={handleCancel}
             className="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
           >
-            {cancelText}
+            {cancelText || t('common.cancel')}
           </button>
           <button
             onClick={handleConfirm}
             className={`px-4 py-2 text-white rounded transition-colors ${buttonStyles[type]}`}
           >
-            {confirmText}
+            {confirmText || t('common.delete')}
           </button>
         </div>
       </div>

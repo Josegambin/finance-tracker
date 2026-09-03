@@ -1,18 +1,17 @@
-import type {
-  Transaction
-} from '../types/transaction';
+import { useTranslation } from 'react-i18next';
+import type { Transaction } from '../types/transaction';
 
 interface TransactionListProps {
   transactions: Transaction[];
-  onDelete: (
-    id: number
-  ) => Promise<void>;
+  onDelete: (id: number) => Promise<void>;
 }
 
 export default function TransactionList({
   transactions,
   onDelete
 }: TransactionListProps) {
+
+  const { t } = useTranslation();
 
   if (transactions.length === 0) {
 
@@ -25,12 +24,11 @@ export default function TransactionList({
         </span>
 
         <h3>
-          No transactions found
+          {t('transactions.noTransactions')}
         </h3>
 
         <p>
-          Try changing your filters or add
-          a new transaction.
+          {t('transactions.noTransactionsDescription')}
         </p>
 
       </div>
@@ -121,8 +119,8 @@ export default function TransactionList({
                 onClick={() =>
                   onDelete(transaction.id)
                 }
-                aria-label={`Delete ${transaction.description}`}
-                title="Delete transaction"
+                aria-label={`${t('common.delete')} ${transaction.description}`}
+                title={t('common.delete')}
               >
                 🗑
               </button>

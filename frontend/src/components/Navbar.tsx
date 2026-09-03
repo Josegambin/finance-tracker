@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { useTranslation } from 'react-i18next';
 
 export default function Navbar() {
 
   const { theme, toggleTheme } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <nav className="navbar">
@@ -26,19 +28,19 @@ export default function Navbar() {
         <div className="navbar-links">
 
           <Link to="/dashboard">
-            Dashboard
+            {t('nav.dashboard')}
           </Link>
 
           <Link to="/transactions">
-            Transactions
+            {t('nav.transactions')}
           </Link>
 
           <Link to="/categories">
-            Categories
+            {t('nav.categories')}
           </Link>
 
           <Link to="/budgets">
-            Budgets
+            {t('budgets.title')}
           </Link>
 
         </div>
@@ -64,7 +66,7 @@ export default function Navbar() {
 
             }}
           >
-            Logout
+            {t('nav.logout')}
           </button>
         </div>
 
