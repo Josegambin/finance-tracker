@@ -1,10 +1,16 @@
 
 # Java
 backend/target/
-
+backend/cp.txt
+backend/package.json
+backend/package-lock.json
 # Node
 frontend/node_modules/
 frontend/dist/
+/package-lock.json
+# JVM crash dumps
+hs_err_pid*.log
+replay_pid*.log
 
 # IDE
 .idea/

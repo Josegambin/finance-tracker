@@ -1,7 +1,8 @@
 import type {
   Transaction,
   CreateTransactionRequest,
-  TransactionPageResponse
+  TransactionPageResponse,
+  TransactionType
 } from '../types/transaction';
 import { errorHandler } from '../services/errorHandler';
 import { apiFetch } from '../services/apiClient';
@@ -23,15 +24,54 @@ function getHeaders(): HeadersInit {
 
 }
 
+export interface TransactionQuery {
+  page?: number;
+  size?: number;
+  sort?: string;
+  search?: string;
+  type?: TransactionType | 'ALL';
+  categoryId?: number | 'ALL';
+  month?: string;
+}
+
 export async function getTransactions(
-  page: number = 0,
-  size: number = 5,
-  sort: string = 'date,desc'
+  query: TransactionQuery = {}
 ): Promise<TransactionPageResponse> {
+
+  const {
+    page = 0,
+    size = 5,
+    sort = 'date,desc',
+    search,
+    type,
+    categoryId,
+    month
+  } = query;
+
+  const params = new URLSearchParams();
+  params.append('page', page.toString());
+  params.append('size', size.toString());
+  params.append('sort', sort);
+
+  if (search && search.trim() !== '') {
+    params.append('search', search.trim());
+  }
+
+  if (type && type !== 'ALL') {
+    params.append('type', type);
+  }
+
+  if (categoryId !== undefined && categoryId !== null && categoryId !== 'ALL') {
+    params.append('categoryId', categoryId.toString());
+  }
+
+  if (month && month !== 'ALL') {
+    params.append('month', month);
+  }
 
   const response =
     await apiFetch(
-      `/transactions?page=${page}&size=${size}&sort=${sort}`,
+      `/transactions?${params.toString()}`,
       {
         headers: getHeaders()
       }

@@ -49,10 +49,17 @@ class AuthServiceTest {
     private User user;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         registerRequest = new RegisterRequest("John Doe", "john@example.com", "password123");
         loginRequest = new LoginRequest("john@example.com", "password123");
         user = new User("John Doe", "john@example.com", "encodedPassword");
+        setId(user, 1L);
+    }
+
+    private static void setId(Object entity, Long id) throws Exception {
+        var field = entity.getClass().getDeclaredField("id");
+        field.setAccessible(true);
+        field.set(entity, id);
     }
 
     @Test

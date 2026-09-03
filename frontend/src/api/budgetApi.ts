@@ -2,11 +2,9 @@
 import { apiFetch } from '../services/apiClient';
 import type { Budget, CreateBudgetRequest } from '../types/budget';
 
-const API_URL = 'http://localhost:8080/api';
-
 export async function getBudgets(): Promise<Budget[]> {
   // ✅ Usa apiFetch. Asegúrate de que la URL sea correcta.
-  const response = await apiFetch('/budgets'); 
+  const response = await apiFetch('/budgets');
 
   if (!response.ok) {
     // Si el backend devuelve un JSON, lo leemos. Si devuelve HTML, lanzamos error genérico.

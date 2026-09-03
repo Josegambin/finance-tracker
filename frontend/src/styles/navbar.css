@@ -1,81 +1,67 @@
+/* =========================================
+   NAVBAR (Layout arreglado)
+   ========================================= */
+
 .navbar {
   width: 100%;
   background: #0b1220;
   border-bottom: 1px solid #1e293b;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .navbar-container {
   max-width: 1200px;
   margin: 0 auto;
-
   min-height: 70px;
-
   padding: 0 24px;
-
   display: flex;
   align-items: center;
-
-  gap: 40px;
+  gap: 24px; /* Reducimos el espacio entre secciones */
 }
 
+/* Marca */
 .navbar-brand {
   display: flex;
   align-items: center;
-
   gap: 10px;
-
   color: #f8fafc;
-
   text-decoration: none;
-
   font-size: 20px;
   font-weight: 700;
-
   white-space: nowrap;
 }
 
 .brand-icon {
   display: flex;
-
   align-items: center;
   justify-content: center;
-
   width: 34px;
   height: 34px;
-
   border-radius: 9px;
-
   background: #2563eb;
-
   color: white;
-
   font-weight: 800;
 }
 
+/* Enlaces */
 .navbar-links {
   display: flex;
-
   align-items: center;
-
-  gap: 8px;
-
-  flex: 1;
+  gap: 4px; /* Reducimos el espacio entre pestañas */
+  flex: 1; /* Esto hace que ocupe el centro y empuje los botones a la derecha */
 }
 
 .navbar-links a {
-  padding: 9px 13px;
-
-  border-radius: 8px;
-
+  padding: 8px 14px;
+  border-radius: 999px;
   color: #94a3b8;
-
   text-decoration: none;
-
   font-size: 14px;
-
-  transition:
-    background 0.2s ease,
-    color 0.2s ease;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
 }
 
 .navbar-links a:hover {
@@ -83,20 +69,50 @@
   color: #f8fafc;
 }
 
-.navbar-logout {
-  padding: 9px 15px;
+/* ⭐ ESTILO DEL ENLACE ACTIVO ⭐ */
+.navbar-links a.active {
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
 
-  border: 1px solid #334155;
+/* Botones de la derecha */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto; /* Empuja todo a la derecha */
+}
 
-  border-radius: 8px;
-
-  background: transparent;
-
+.theme-toggle {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: #1e293b;
   color: #cbd5e1;
-
   cursor: pointer;
+  font-size: 16px;
+  transition: background 0.2s ease;
+}
 
+.theme-toggle:hover {
+  background: #334155;
+}
+
+.navbar-logout {
+  padding: 8px 14px;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: transparent;
+  color: #cbd5e1;
+  cursor: pointer;
   font-size: 14px;
+  white-space: nowrap;
 }
 
 .navbar-logout:hover {
@@ -104,23 +120,90 @@
   color: #f8fafc;
 }
 
-@media (max-width: 800px) {
+/* Botón hamburguesa (oculto en desktop) */
+.navbar-burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  background: #1e293b;
+  cursor: pointer;
+  margin-left: auto;
+}
 
+.navbar-burger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: #cbd5e1;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.navbar-burger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.navbar-burger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.navbar-burger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+@media (max-width: 800px) {
   .navbar-container {
     flex-wrap: wrap;
-
     padding-top: 12px;
     padding-bottom: 12px;
-
     gap: 12px;
   }
 
   .navbar-links {
     order: 3;
-
     width: 100%;
-
     overflow-x: auto;
+    padding-bottom: 4px;
   }
 
+  .navbar-actions {
+    margin-left: auto;
+  }
+}
+
+/* =========================================
+   MÓVIL: menú desplegable hamburguesa
+   ========================================= */
+@media (max-width: 640px) {
+  .navbar-burger {
+    display: flex;
+  }
+
+  .navbar-links {
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 8px 0 12px;
+  }
+
+  .navbar-links.open {
+    display: flex;
+  }
+
+  .navbar-links a {
+    padding: 12px 16px;
+    border-radius: 10px;
+    text-align: left;
+  }
+
+  .navbar-actions {
+    margin-left: 0;
+  }
 }
