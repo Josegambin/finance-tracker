@@ -1,5 +1,10 @@
 const en = {
   translation: {
+
+    app:{
+      title: 'Finance Tracker',
+    },
+    
     // =========================
     // NAVBAR
     // =========================

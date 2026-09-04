@@ -1,5 +1,10 @@
 const es = {
   translation: {
+
+    app:{
+      title: 'Registro de Finanzas',
+    },
+
     // =========================
     // NAVBAR
     // =========================
