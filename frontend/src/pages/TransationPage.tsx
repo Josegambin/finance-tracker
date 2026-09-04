@@ -9,6 +9,7 @@ import TransactionList from '../components/TransactionList';
 import TransactionFilters from '../components/TransactionFilters';
 import type { Category } from '../types/category';
 import type { Transaction, CreateTransactionRequest, TransactionType } from '../types/transaction';
+import { toastService } from '../services/toastService';
 
 export default function TransactionsPage() {
   const { t } = useTranslation();
@@ -25,8 +26,34 @@ export default function TransactionsPage() {
   const [categoryFilter, setCategoryFilter] = useState<number | 'ALL'>('ALL');
   const [sort, setSort] = useState('date,desc');
   const [exporting, setExporting] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  useEffect(() => {
+    if (!error && !success) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setError(null);
+      setSuccess(null);
+    }, 4000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [error, success]);
 
   const debouncedSearch = useDebounce(search, 400);
+
+  useEffect(() => {
+    if (!error && !success) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setError(null);
+      setSuccess(null);
+    }, 4000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [error, success]);
 
   const clearFilters = () => {
     setSearch('');
@@ -70,6 +97,10 @@ export default function TransactionsPage() {
     try {
       await createTransaction(transaction);
       setCurrentPage(0);
+      setSuccess(null);
+      const message = t('transactions.created');
+      setSuccess(message);
+      toastService.success(message);
     } catch (error) {
       setError(error instanceof Error ? error.message : t('common.errorCreating'));
     }
@@ -78,6 +109,9 @@ export default function TransactionsPage() {
   const handleDelete = async (id: number) => {
     try {
       await deleteTransaction(id);
+       setSuccess(null);
+      const message = t('transactions.created');
+      setSuccess(message);
       await loadData();
     } catch (error) {
       setError(error instanceof Error ? error.message : t('common.errorDeleting'));
@@ -87,7 +121,10 @@ export default function TransactionsPage() {
   const handleExportCsv = async () => {
     try {
       setExporting(true);
-      setError(null);
+
+      setSuccess(null);
+      const message = t('transactions.created');
+      setSuccess(message);
       const blob = await exportTransactionsCsv(search, typeFilter, categoryFilter === 'ALL' ? undefined : categoryFilter, monthFilter);
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -132,6 +169,7 @@ export default function TransactionsPage() {
         </div>
 
         {error && <div className="alert alert-danger">{error}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
 
         <section className="card mb-4 p-3">
           <h2 className="h5">{t('transactions.addTransaction')}</h2>

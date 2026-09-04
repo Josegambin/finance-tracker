@@ -56,6 +56,7 @@ const es = {
       descriptionZA: 'Descripción — Z → A',
       noTransactions: 'No hay transacciones',
       noTransactionsDescription: 'Añade tu primer ingreso o gasto para comenzar a controlar tus finanzas.',
+      created: 'Transacción añadida correctamente.',
       clearFilters: 'Limpiar filtros',
       previous: 'Anterior',
       next: 'Siguiente',
@@ -86,6 +87,7 @@ const es = {
       // Added for the components
       noCategories: 'No hay categorías',
       noCategoriesDescription: 'Crea tu primera categoría para empezar a organizar tus finanzas.',
+      created: 'Categoría añadida correctamente.',
       namePlaceholder: 'Nombre de la categoría'
     },
 
@@ -106,6 +108,7 @@ const es = {
       noBudgetsDescription: 'Crea tu primer presupuesto mensual.',
       noBudgetsForMonth: 'No hay presupuestos para este mes',
       noBudgetsForMonthDescription: 'Crea un presupuesto para empezar a controlar tus gastos.',
+      created: 'Presupuesto creado correctamente.',
       budgetManagement: 'GESTIÓN DE PRESUPUESTOS',
       // Added for the components
       selectCategory: 'Seleccionar categoría',

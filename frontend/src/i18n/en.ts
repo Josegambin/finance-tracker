@@ -56,6 +56,7 @@ const en = {
       descriptionZA: 'Description — Z → A',
       noTransactions: 'No transactions yet',
       noTransactionsDescription: 'Add your first income or expense to start tracking your finances.',
+      created: 'Transaction created successfully.',
       clearFilters: 'Clear filters',
       previous: 'Previous',
       next: 'Next',
@@ -86,6 +87,7 @@ const en = {
       // Added for the components
       noCategories: 'No categories yet',
       noCategoriesDescription: 'Create your first category to start organizing your finances.',
+      created: 'Category created successfully.',
       namePlaceholder: 'Category name'
     },
 
@@ -106,6 +108,7 @@ const en = {
       noBudgetsDescription: 'Create your first monthly budget.',
       noBudgetsForMonth: 'No budgets for this month',
       noBudgetsForMonthDescription: 'Create a budget to start tracking your spending.',
+      created: 'Budget created successfully.',
       budgetManagement: 'BUDGET MANAGEMENT',
       // Added for the components
       selectCategory: 'Select category',
