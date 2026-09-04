@@ -11,7 +11,21 @@ export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
+    useEffect(() => {
+    if (!error && !success) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setError(null);
+      setSuccess(null);
+    }, 4000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [error, success]);
+  
   const loadCategories = async () => {
     try {
       setLoading(true);
@@ -30,6 +44,9 @@ export default function CategoriesPage() {
     try {
       const newCategory = await createCategory(category);
       setCategories((current) => [...current, newCategory]);
+       setSuccess(null);
+      const message = t('categories.created');
+      setSuccess(message);
     } catch (error) {
       setError(error instanceof Error ? error.message : t('common.errorCreating'));
     }
@@ -39,6 +56,9 @@ export default function CategoriesPage() {
     try {
       await deleteCategory(id);
       setCategories((current) => current.filter((cat) => cat.id !== id));
+       setSuccess(null);
+      const message = t('categories.deleted');
+      setSuccess(message);
     } catch (error) {
       setError(error instanceof Error ? error.message : t('common.errorDeleting'));
     }
@@ -59,6 +79,7 @@ export default function CategoriesPage() {
         </div>
 
         {error && <div className="alert alert-danger">{error}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
 
         <section className="card mb-4 p-3">
           <h2 className="h5">{t('categories.addCategory')}</h2>

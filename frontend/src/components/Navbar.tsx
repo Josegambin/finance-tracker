@@ -22,7 +22,7 @@ export default function Navbar() {
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <nav className="navbar navbar-expand-lg bg-body-tertiary border-bottom shadow-sm px-3">
+    <nav className="navbar fixed-top navbar-expand-lg bg-body-tertiary border-bottom shadow-sm px-3">
 
       <NavLink
         to="/dashboard"
@@ -34,7 +34,7 @@ export default function Navbar() {
         >
           €
         </span>
-        Finance Tracker
+        {t('app.title')}
       </NavLink>
 
       <button
@@ -79,7 +79,6 @@ export default function Navbar() {
 
         <div className="d-flex align-items-center gap-2">
 
-          {/* 🌍 SELECTOR DE IDIOMA */}
           <button
             className="btn btn-outline-secondary"
             onClick={() => changeLanguage(currentLang === 'es' ? 'en' : 'es')}
@@ -89,7 +88,6 @@ export default function Navbar() {
             {currentLang === 'es' ? '🇬🇧' : '🇪🇸'}
           </button>
 
-          {/* 🌙 SELECTOR DE TEMA */}
           <button
             className="btn btn-outline-secondary"
             onClick={toggleTheme}

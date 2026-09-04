@@ -130,7 +130,7 @@ src/
 - **NUNCA** commitear credenciales o secrets
 - Usar variables de entorno para configuración sensible
 - Validar todos los inputs (DTOs con `@Valid`)
-- Hashear contraseñas con BCrypt (PENDIENTE)
+- Hashear contraseñas con BCrypt (implementado en `SecurityConfig.passwordEncoder()`)
 - Usar HTTPS en producción
 - Implementar rate limiting
 - Sanitizar datos antes de guardar en BD

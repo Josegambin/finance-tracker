@@ -16,8 +16,8 @@ import type { Budget, CreateBudgetRequest } from '../types/budget';
  *         and a preview of the response body.
  */
 export async function getBudgets(): Promise<Budget[]> {
-  // Uses apiFetch so the auth token is attached and the response is validated.
-  const response = await apiFetch('/budgets');
+  // Request all existing budgets so the month selector includes older months.
+  const response = await apiFetch('/budgets?page=0&size=1000&sort=month,desc');
 
   if (!response.ok) {
     // If the backend returns JSON, read it. If it returns HTML, throw a generic error.
@@ -25,7 +25,8 @@ export async function getBudgets(): Promise<Budget[]> {
     throw new Error(`Error ${response.status}: ${text.slice(0, 100)}`);
   }
 
-  return response.json();
+  const data: Budget[] | { content: Budget[] } = await response.json();
+  return Array.isArray(data) ? data : data.content;
 }
 
 /**
