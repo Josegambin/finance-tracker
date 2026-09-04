@@ -25,51 +25,59 @@ export default function BudgetCard({
     status = 'warning';
   }
 
+  const progressClass =
+    status === 'danger' ? 'bg-danger' : status === 'warning' ? 'bg-warning' : 'bg-success';
+
+  const remainingClass = budget.remainingAmount < 0 ? 'text-danger' : 'text-muted';
+
   return (
-    <div className="budget-card">
-      <div className="budget-card-header">
-        <div>
-          <div className="budget-category">
-            <span className="budget-icon">💰</span>
+    <div className="card card-hover h-100">
+      <div className="card-body">
+        <div className="d-flex justify-content-between align-items-start mb-2">
+          <div className="d-flex align-items-center gap-2">
+            <span className="fs-3">💰</span>
             <div>
-              <h3>{budget.categoryName}</h3>
-              <span className="budget-month">{budget.month}</span>
+              <h3 className="h6 mb-0">{budget.categoryName}</h3>
+              <span className="text-muted small">{budget.month}</span>
             </div>
           </div>
+          <button
+            className="btn btn-outline-danger btn-sm"
+            onClick={() => onDelete(budget.id)}
+            title={t('budgets.deleteBudget')}
+          >
+            🗑
+          </button>
         </div>
-        <button
-          className="delete-button"
-          onClick={() => onDelete(budget.id)}
-          title={t('budgets.deleteBudget')}
-        >
-          🗑
-        </button>
-      </div>
 
-      <div className="budget-values">
-        <div>
-          <span className="budget-label">{t('budgets.totalSpent')}</span>
-          <strong>{formatCurrency(budget.spentAmount)}</strong>
+        <div className="d-flex justify-content-between mb-2">
+          <div>
+            <span className="text-muted small text-uppercase">{t('budgets.totalSpent')}</span>
+            <strong className="d-block">{formatCurrency(budget.spentAmount)}</strong>
+          </div>
+          <div className="text-end">
+            <span className="text-muted small text-uppercase">{t('budgets.totalBudget')}</span>
+            <strong className="d-block">{formatCurrency(budget.budgetAmount)}</strong>
+          </div>
         </div>
-        <div>
-          <span className="budget-label">{t('budgets.totalBudget')}</span>
-          <strong>{formatCurrency(budget.budgetAmount)}</strong>
+
+        <div className="progress mb-1" role="progressbar" aria-valuenow={percentage} aria-valuemin={0} aria-valuemax={100}>
+          <div
+            className={`progress-bar ${progressClass}`}
+            style={{ width: `${percentage}%` }}
+          />
         </div>
-      </div>
 
-      <div className="budget-progress-container">
-        <div className={`budget-progress ${status}`} style={{ width: `${percentage}%` }} />
-      </div>
-
-      <div className="budget-footer">
-        <span className={`budget-percentage ${status}`}>
-          {budget.percentageUsed.toFixed(1)}%
-        </span>
-        <span className={budget.remainingAmount < 0 ? 'remaining negative' : 'remaining'}>
-          {budget.remainingAmount >= 0
-            ? `${t('budgets.remaining')}: ${formatCurrency(budget.remainingAmount)}`
-            : `${t('budgets.overBudget')}: ${formatCurrency(Math.abs(budget.remainingAmount))}`}
-        </span>
+        <div className="d-flex justify-content-between">
+          <span className={`fw-bold ${progressClass}`}>
+            {budget.percentageUsed.toFixed(1)}%
+          </span>
+          <span className={remainingClass}>
+            {budget.remainingAmount >= 0
+              ? `${t('budgets.remaining')}: ${formatCurrency(budget.remainingAmount)}`
+              : `${t('budgets.overBudget')}: ${formatCurrency(Math.abs(budget.remainingAmount))}`}
+          </span>
+        </div>
       </div>
     </div>
   );

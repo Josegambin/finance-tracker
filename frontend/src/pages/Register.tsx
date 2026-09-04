@@ -26,35 +26,75 @@ export default function Register() {
   };
 
   return (
-    <main>
-      <h1>{t('auth.register')}</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder={t('auth.username')}
-          value={form.name}
-          onChange={(event) => setForm({ ...form, name: event.target.value })}
-        />
-        <input
-          type="email"
-          placeholder={t('auth.email')}
-          value={form.email}
-          onChange={(event) => setForm({ ...form, email: event.target.value })}
-        />
-        <input
-          type="password"
-          placeholder={t('auth.password')}
-          value={form.password}
-          onChange={(event) => setForm({ ...form, password: event.target.value })}
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? t('auth.creatingAccount') : t('auth.registerButton')}
-        </button>
-        {error && <p>{error}</p>}
-        <p>
-          {t('auth.haveAccount')} <Link to="/login">{t('auth.login')}</Link>
-        </p>
-      </form>
+    <main
+      className="d-flex align-items-center justify-content-center min-vh-100 p-3"
+      style={{ background: 'var(--app-auth-bg)' }}
+    >
+      <div className="card border-0 p-4 p-md-5 w-100 rounded-4" style={{ maxWidth: '440px', boxShadow: 'var(--app-shadow-md)' }}>
+        <div className="text-center mb-4">
+          <span
+            className="brand-logo d-inline-flex align-items-center justify-content-center rounded-3 mx-auto mb-3"
+            style={{ width: 56, height: 56, fontSize: '1.6rem', fontWeight: 800 }}
+          >
+            €
+          </span>
+          <h1 className="h3 mb-1 fw-bold">{t('auth.register')}</h1>
+          <p className="text-muted small mb-0">Finance Tracker</p>
+        </div>
+        <form onSubmit={handleSubmit} className="d-grid gap-3">
+          <div>
+            <label htmlFor="register-name" className="form-label">{t('auth.username')}</label>
+            <input
+              id="register-name"
+              type="text"
+              className="form-control"
+              placeholder={t('auth.username')}
+              value={form.name}
+              onChange={(event) => setForm({ ...form, name: event.target.value })}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="register-email" className="form-label">{t('auth.email')}</label>
+            <input
+              id="register-email"
+              type="email"
+              className="form-control"
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={(event) => setForm({ ...form, email: event.target.value })}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="register-password" className="form-label">{t('auth.password')}</label>
+            <input
+              id="register-password"
+              type="password"
+              className="form-control"
+              placeholder="••"
+              value={form.password}
+              onChange={(event) => setForm({ ...form, password: event.target.value })}
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary btn-lg w-100 rounded-3" disabled={loading}>
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" />
+                {t('auth.creatingAccount')}
+              </>
+            ) : (
+              t('auth.registerButton')
+            )}
+          </button>
+          {error && <div className="alert alert-danger py-2 mb-0">{error}</div>}
+          <p className="text-center text-muted small mb-0 mt-2">
+            {t('auth.haveAccount')}{' '}
+            <Link to="/login" className="fw-semibold text-decoration-none">{t('auth.login')}</Link>
+          </p>
+        </form>
+      </div>
     </main>
   );
 }

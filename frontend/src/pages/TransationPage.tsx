@@ -114,7 +114,7 @@ export default function TransactionsPage() {
     return (
       <>
         <Navbar />
-        <main className="page-container">
+        <main className="container py-4">
           <p>{t('transactions.loading')}</p>
         </main>
       </>
@@ -124,23 +124,21 @@ export default function TransactionsPage() {
   return (
     <>
       <Navbar />
-      <main className="page-container">
-        <div className="page-header">
-          <div>
-            <p className="eyebrow">{t('transactions.financeManagement')}</p>
-            <h1>{t('transactions.title')}</h1>
-            <p className="page-description">{t('transactions.description')}</p>
-          </div>
+      <main className="container py-4">
+        <div className="mb-4">
+          <p className="text-muted small text-uppercase mb-0">{t('transactions.financeManagement')}</p>
+          <h1 className="h2 mb-1">{t('transactions.title')}</h1>
+          <p className="text-muted mb-0">{t('transactions.description')}</p>
         </div>
 
-        {error && <div className="error-message">{error}</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
 
-        <section className="content-card">
-          <h2>{t('transactions.addTransaction')}</h2>
+        <section className="card mb-4 p-3">
+          <h2 className="h5">{t('transactions.addTransaction')}</h2>
           <TransactionForm categories={categories} onCreate={handleCreate} />
         </section>
 
-        <section className="content-card">
+        <section className="card p-3">
           <TransactionFilters
             search={search}
             type={typeFilter}
@@ -156,33 +154,33 @@ export default function TransactionsPage() {
             onSortChange={(value) => { setSort(value); setCurrentPage(0); }}
           />
 
-          <div className="section-header">
+          <div className="d-flex flex-wrap justify-content-between align-items-center gap-2">
             <div>
-              <h2>{t('transactions.yourTransactions')}</h2>
-              <p>{t('transactions.transactionsCount', { count: totalElements })}</p>
+              <h2 className="h5 mb-0">{t('transactions.yourTransactions')}</h2>
+              <p className="text-muted small mb-0">{t('transactions.transactionsCount', { count: totalElements })}</p>
             </div>
-            <div>
-              <button type="button" onClick={handleExportCsv} disabled={exporting}>
+            <div className="d-flex gap-2">
+              <button type="button" className="btn btn-outline-secondary btn-sm" onClick={handleExportCsv} disabled={exporting}>
                 {exporting ? `⏳ ${t('transactions.exporting')}` : `📥 ${t('transactions.exportCsv')}`}
               </button>
-              <button type="button" onClick={clearFilters}>
+              <button type="button" className="btn btn-outline-secondary btn-sm" onClick={clearFilters}>
                 {t('transactions.clearFilters')}
               </button>
             </div>
           </div>
 
           {totalPages > 1 && (
-            <div className="pagination">
-              <button type="button" onClick={goToPreviousPage} disabled={currentPage === 0}>
+            <nav className="d-flex align-items-center justify-content-center gap-2 my-3">
+              <button type="button" className="btn btn-outline-secondary btn-sm" onClick={goToPreviousPage} disabled={currentPage === 0}>
                 ← {t('transactions.previous')}
               </button>
-              <span>
+              <span className="text-muted small">
                 {t('transactions.page')} {currentPage + 1} {t('transactions.of')} {totalPages}
               </span>
-              <button type="button" onClick={goToNextPage} disabled={currentPage === totalPages - 1}>
+              <button type="button" className="btn btn-outline-secondary btn-sm" onClick={goToNextPage} disabled={currentPage === totalPages - 1}>
                 {t('transactions.next')} →
               </button>
-            </div>
+            </nav>
           )}
 
           <TransactionList transactions={transactions} onDelete={handleDelete} />

@@ -115,18 +115,19 @@ export default function TransactionForm({
   return (
 
     <form
-      className="transaction-form"
+      className="row g-3 mt-1"
       onSubmit={handleSubmit}
     >
 
-      <div className="form-group description-field">
+      <div className="col-md-6">
 
-        <label>
+        <label className="form-label">
           {t('transactions.description')}
         </label>
 
         <input
           type="text"
+          className="form-control"
           value={description}
           onChange={(event) =>
             setDescription(
@@ -139,9 +140,9 @@ export default function TransactionForm({
 
       </div>
 
-      <div className="form-group amount-field">
+      <div className="col-md-3">
 
-        <label>
+        <label className="form-label">
           {t('transactions.amount')}
         </label>
 
@@ -149,6 +150,7 @@ export default function TransactionForm({
           type="number"
           step="0.01"
           min="0.01"
+          className="form-control"
           value={amount}
           onChange={(event) =>
             setAmount(
@@ -161,14 +163,15 @@ export default function TransactionForm({
 
       </div>
 
-      <div className="form-group date-field">
+      <div className="col-md-3">
 
-        <label>
+        <label className="form-label">
           {t('transactions.date')}
         </label>
 
         <input
           type="date"
+          className="form-control"
           value={date}
           onChange={(event) =>
             setDate(
@@ -180,13 +183,14 @@ export default function TransactionForm({
 
       </div>
 
-      <div className="form-group">
+      <div className="col-md-4">
 
-        <label>
+        <label className="form-label">
           {t('transactions.type')}
         </label>
 
         <select
+          className="form-select"
           value={type}
           onChange={(event) =>
             setType(
@@ -207,13 +211,14 @@ export default function TransactionForm({
 
       </div>
 
-      <div className="form-group category-field">
+      <div className="col-md-4">
 
-        <label>
+        <label className="form-label">
           {t('transactions.category')}
         </label>
 
         <select
+          className="form-select"
           value={categoryId ?? ''}
           onChange={(event) =>
             setCategoryId(
@@ -248,20 +253,24 @@ export default function TransactionForm({
 
       </div>
 
-      <button
-        type="submit"
-        className="primary-button"
-        disabled={
-          loading ||
-          !categoryId
-        }
-      >
+      <div className="col-md-4 d-flex align-items-end">
 
-        {loading
-          ? t('common.loading')
-          : t('transactions.addTransaction')}
+        <button
+          type="submit"
+          className="btn btn-primary w-100"
+          disabled={
+            loading ||
+            !categoryId
+          }
+        >
 
-      </button>
+          {loading
+            ? t('common.loading')
+            : t('transactions.addTransaction')}
+
+        </button>
+
+      </div>
 
     </form>
   );

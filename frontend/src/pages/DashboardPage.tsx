@@ -87,10 +87,10 @@ export default function Dashboard() {
     return (
       <>
         <Navbar />
-        <main className="page-container">
-          <div className="dashboard-loading">
-            <div className="loading-spinner"></div>
-            <p>{t("common.loading")}</p>
+        <main className="container py-4">
+          <div className="text-center py-5">
+            <div className="spinner-border text-primary" role="status"></div>
+            <p className="mt-2 text-muted">{t("common.loading")}</p>
           </div>
         </main>
       </>
@@ -101,13 +101,13 @@ export default function Dashboard() {
     return (
       <>
         <Navbar />
-        <main className="page-container">
-          <div className="dashboard-error">
+        <main className="container py-4">
+          <div className="alert alert-danger d-flex align-items-center gap-2">
             <span>⚠️</span>
-            <div>
+            <div className="flex-grow-1">
               <strong>{t("common.unableToLoad")}</strong>
-              <p>{t("common.tryAgain")}</p>
-              <button type="button" onClick={loadDashboard}>
+              <p className="mb-2">{t("common.tryAgain")}</p>
+              <button type="button" className="btn btn-sm btn-outline-danger" onClick={loadDashboard}>
                 {t("common.retry")}
               </button>
             </div>
@@ -122,78 +122,91 @@ export default function Dashboard() {
   return (
     <>
       <Navbar />
-      <main className="page-container">
+      <main className="container py-4">
         {loading && (
-          <div className="dashboard-refreshing">{t("common.updating")}</div>
+          <div className="alert alert-primary py-1 small">{t("common.updating")}</div>
         )}
 
-        <div className="page-header">
+        <div className="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-4">
           <div>
-            <p className="eyebrow">{t("dashboard.financeOverview")}</p>
-            <h1>{t("dashboard.title")}</h1>
-            <p className="page-description">{t("dashboard.description")}</p>
-            <div className="month-selector">
-              <label htmlFor="month">{t("transactions.month")}</label>
-              <select
-                id="month"
-                value={selectedMonth}
-                onChange={(event) => setSelectedMonth(event.target.value)}
-              >
-                {months.map((month) => (
-                  <option key={month.value} value={month.value}>
-                    {month.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <p className="text-muted small text-uppercase mb-0">{t("dashboard.financeOverview")}</p>
+            <h1 className="h2 mb-1">{t("dashboard.title")}</h1>
+            <p className="text-muted mb-0">{t("dashboard.description")}</p>
+          </div>
+          <div className="d-flex align-items-center gap-2">
+            <label htmlFor="month" className="form-label mb-0 fw-semibold">{t("transactions.month")}</label>
+            <select
+              id="month"
+              className="form-select w-auto"
+              value={selectedMonth}
+              onChange={(event) => setSelectedMonth(event.target.value)}
+            >
+              {months.map((month) => (
+                <option key={month.value} value={month.value}>
+                  {month.label}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
-        <section className="dashboard-grid">
-          <DashboardCard
-            title={t("dashboard.balance")}
-            value={formatCurrency(dashboard.balance)}
-            icon="💰"
-            type="balance"
-          />
-          <DashboardCard
-            title={t("dashboard.income")}
-            value={formatCurrency(dashboard.totalIncome)}
-            icon="↗"
-            type="income"
-          />
-          <DashboardCard
-            title={t("dashboard.expenses")}
-            value={formatCurrency(dashboard.totalExpenses)}
-            icon="↘"
-            type="expense"
-          />
-        </section>
-
-        <section className="dashboard-chart-card">
-          <div className="chart-header">
-            <h2>{t("dashboard.expensesByCategory")}</h2>
-            <p>{t("dashboard.whereMoneyGoing")}</p>
+        <div className="row g-3 mb-4">
+          <div className="col-md-4">
+            <DashboardCard
+              title={t("dashboard.balance")}
+              value={formatCurrency(dashboard.balance)}
+              icon="💰"
+              type="balance"
+            />
           </div>
-          <ExpensesByCategoryChart data={expensesByCategory} />
-        </section>
-
-        <section className="dashboard-chart-card">
-          <div className="chart-header">
-            <h2>{t("dashboard.budgetVsSpent")}</h2>
-            <p>{t("dashboard.compareBudget")}</p>
+          <div className="col-md-4">
+            <DashboardCard
+              title={t("dashboard.income")}
+              value={formatCurrency(dashboard.totalIncome)}
+              icon="↗"
+              type="income"
+            />
           </div>
-          <BudgetVsSpentChart data={budgetVsSpent} />
+          <div className="col-md-4">
+            <DashboardCard
+              title={t("dashboard.expenses")}
+              value={formatCurrency(dashboard.totalExpenses)}
+              icon="↘"
+              type="expense"
+            />
+          </div>
+        </div>
+
+        <section className="card mb-4 p-3">
+          <div className="card-header bg-transparent border-0">
+            <h2 className="h5 mb-0">{t("dashboard.expensesByCategory")}</h2>
+            <p className="text-muted small mb-0">{t("dashboard.whereMoneyGoing")}</p>
+          </div>
+          <div className="card-body">
+            <ExpensesByCategoryChart data={expensesByCategory} />
+          </div>
         </section>
 
-        <section className="content-card">
-          <div className="section-header">
+        <section className="card mb-4 p-3">
+          <div className="card-header bg-transparent border-0">
+            <h2 className="h5 mb-0">{t("dashboard.budgetVsSpent")}</h2>
+            <p className="text-muted small mb-0">{t("dashboard.compareBudget")}</p>
+          </div>
+          <div className="card-body">
+            <BudgetVsSpentChart data={budgetVsSpent} />
+          </div>
+        </section>
+
+        <section className="card p-3">
+          <div className="card-header bg-transparent border-0">
             <div>
-              <h2>{t("dashboard.recentTransactions")}</h2>
-              <p>{t("dashboard.latestActivity")}</p>
+              <h2 className="h5 mb-0">{t("dashboard.recentTransactions")}</h2>
+              <p className="text-muted small mb-0">{t("dashboard.latestActivity")}</p>
             </div>
           </div>
-          <RecentTransactions transactions={dashboard.recentTransactions} />
+          <div className="card-body">
+            <RecentTransactions transactions={dashboard.recentTransactions} />
+          </div>
         </section>
       </main>
     </>

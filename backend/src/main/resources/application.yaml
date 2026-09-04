@@ -20,16 +20,13 @@ spring:
     enabled: false
     locations: classpath:db/migration
     baseline-on-migrate: true
-
-  # Logging Configuration
-  logging:
-    level:
-      root: INFO
-      finance_tracker_api: DEBUG
-      org.springframework.security: DEBUG
-      org.hibernate.SQL: DEBUG
-      org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    finance_tracker_api: DEBUG
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
 server:
   port: ${SERVER_PORT:8080}
 

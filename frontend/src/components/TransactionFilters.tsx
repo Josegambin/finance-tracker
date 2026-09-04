@@ -76,14 +76,13 @@ export default function TransactionFilters({
 
   return (
 
-    <div className="transaction-filters">
-
+    <div className="row g-3 mb-3">
 
       {/* SEARCH */}
 
-      <div className="filter-group search-filter">
+      <div className="col-md-4">
 
-        <label htmlFor="transaction-search">
+        <label htmlFor="transaction-search" className="form-label">
 
           {t(
             'transactions.search'
@@ -92,10 +91,11 @@ export default function TransactionFilters({
         </label>
 
         <input
-
           id="transaction-search"
 
           type="text"
+
+          className="form-control"
 
           placeholder={
             t(
@@ -115,12 +115,11 @@ export default function TransactionFilters({
 
       </div>
 
-
       {/* TYPE */}
 
-      <div className="filter-group">
+      <div className="col-md-4">
 
-        <label htmlFor="transaction-type">
+        <label htmlFor="transaction-type" className="form-label">
 
           {t(
             'transactions.type'
@@ -129,8 +128,9 @@ export default function TransactionFilters({
         </label>
 
         <select
-
           id="transaction-type"
+
+          className="form-select"
 
           value={type}
 
@@ -155,7 +155,6 @@ export default function TransactionFilters({
 
           </option>
 
-
           <option value="INCOME">
 
             {t(
@@ -163,7 +162,6 @@ export default function TransactionFilters({
             )}
 
           </option>
-
 
           <option value="EXPENSE">
 
@@ -177,12 +175,11 @@ export default function TransactionFilters({
 
       </div>
 
-
       {/* CATEGORY */}
 
-      <div className="filter-group">
+      <div className="col-md-4">
 
-        <label htmlFor="transaction-category">
+        <label htmlFor="transaction-category" className="form-label">
 
           {t(
             'transactions.category'
@@ -190,10 +187,10 @@ export default function TransactionFilters({
 
         </label>
 
-
         <select
-
           id="transaction-category"
+
+          className="form-select"
 
           value={categoryId}
 
@@ -222,12 +219,10 @@ export default function TransactionFilters({
 
           </option>
 
-
           {categories.map(
             category => (
 
               <option
-
                 key={
                   category.id
                 }
@@ -249,12 +244,11 @@ export default function TransactionFilters({
 
       </div>
 
-
       {/* MONTH */}
 
-      <div className="filter-group">
+      <div className="col-md-6">
 
-        <label htmlFor="transaction-month">
+        <label htmlFor="transaction-month" className="form-label">
 
           {t(
             'transactions.month'
@@ -262,10 +256,10 @@ export default function TransactionFilters({
 
         </label>
 
-
         <select
-
           id="transaction-month"
+
+          className="form-select"
 
           value={month}
 
@@ -285,12 +279,10 @@ export default function TransactionFilters({
 
           </option>
 
-
           {months.map(
             currentMonth => (
 
               <option
-
                 key={
                   currentMonth
                 }
@@ -312,12 +304,11 @@ export default function TransactionFilters({
 
       </div>
 
-
       {/* SORT */}
 
-      <div className="filter-group sort-filter">
+      <div className="col-md-6">
 
-        <label htmlFor="transaction-sort">
+        <label htmlFor="transaction-sort" className="form-label">
 
           {t(
             'transactions.sortBy'
@@ -325,10 +316,10 @@ export default function TransactionFilters({
 
         </label>
 
-
         <select
-
           id="transaction-sort"
+
+          className="form-select"
 
           value={sort}
 
@@ -350,7 +341,6 @@ export default function TransactionFilters({
 
           </option>
 
-
           <option value="date,asc">
 
             {t(
@@ -358,7 +348,6 @@ export default function TransactionFilters({
             )}
 
           </option>
-
 
           <option value="amount,desc">
 
@@ -368,7 +357,6 @@ export default function TransactionFilters({
 
           </option>
 
-
           <option value="amount,asc">
 
             {t(
@@ -377,7 +365,6 @@ export default function TransactionFilters({
 
           </option>
 
-
           <option value="description,asc">
 
             {t(
@@ -385,7 +372,6 @@ export default function TransactionFilters({
             )}
 
           </option>
-
 
           <option value="description,desc">
 

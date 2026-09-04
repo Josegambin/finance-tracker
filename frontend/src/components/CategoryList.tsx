@@ -14,38 +14,38 @@ export default function CategoryList({
 
   if (categories.length === 0) {
     return (
-      <div className="empty-state">
-        <span>📂</span>
-        <h3>{t('categories.noCategories')}</h3>
-        <p>{t('categories.noCategoriesDescription')}</p>
+      <div className="text-center py-4">
+        <span className="fs-1 d-block">📂</span>
+        <h3 className="h5 mt-2">{t('categories.noCategories')}</h3>
+        <p className="text-muted mb-0">{t('categories.noCategoriesDescription')}</p>
       </div>
     );
   }
 
   return (
-    <div className="category-list">
+    <ul className="list-group list-group-flush">
       {categories.map((category) => (
-        <div className="category-card" key={category.id}>
-          <div className="category-info">
-            <div className={category.type === 'INCOME' ? 'category-icon income' : 'category-icon expense'}>
+        <li className="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent" key={category.id}>
+          <div className="d-flex align-items-center gap-3">
+            <span className={`fs-4 ${category.type === 'INCOME' ? 'text-success' : 'text-danger'}`}>
               {category.type === 'INCOME' ? '↗' : '↘'}
-            </div>
+            </span>
             <div>
-              <h3>{category.name}</h3>
-              <span className={category.type === 'INCOME' ? 'badge income' : 'badge expense'}>
+              <h3 className="h6 mb-1">{category.name}</h3>
+              <span className={`badge ${category.type === 'INCOME' ? 'text-bg-success' : 'text-bg-danger'}`}>
                 {category.type === 'INCOME' ? t('transactions.income') : t('transactions.expense')}
               </span>
             </div>
           </div>
           <button
-            className="delete-button"
+            className="btn btn-outline-danger btn-sm"
             onClick={() => onDelete(category.id)}
             title={t('common.delete')}
           >
             🗑
           </button>
-        </div>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }

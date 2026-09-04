@@ -15,20 +15,14 @@ export default function RecentTransactions({
 
     return (
 
-      <div className="empty-state">
-
-        <span>
-          📊
-        </span>
-
-        <h3>
+      <div className="text-center py-4">
+        <span className="fs-1 d-block">📊</span>
+        <h3 className="h5 mt-2">
           {t('transactions.noTransactions')}
         </h3>
-
-        <p>
+        <p className="text-muted mb-0">
           {t('transactions.noTransactionsDescription')}
         </p>
-
       </div>
 
     );
@@ -47,79 +41,72 @@ export default function RecentTransactions({
     ).format(amount);
   };
 
-  return (
+    return (
 
-    <div className="recent-transactions">
+      <ul className="list-group list-group-flush">
 
-      {transactions.map(
-        transaction => (
+        {transactions.map(
+          transaction => (
 
-          <div
-            className="recent-transaction"
-            key={transaction.id}
-          >
+            <li
+              className="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent"
+              key={transaction.id}
+            >
 
-            <div className="transaction-info">
+              <div className="d-flex align-items-center gap-3">
+                <span
+                  className={
+                    transaction.type === 'INCOME'
+                      ? 'text-success fs-4'
+                      : 'text-danger fs-4'
+                  }
+                >
+                  {transaction.type === 'INCOME'
+                    ? '↗'
+                    : '↘'}
 
-              <div
+                </span>
+
+                <div>
+
+                  <h3 className="h6 mb-0">
+                    {transaction.description}
+                  </h3>
+
+                  <div className="text-muted small">
+                    <span className="me-2">
+                      {transaction.categoryName}
+                    </span>
+
+                    <span>
+                      {transaction.date}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <strong
                 className={
                   transaction.type === 'INCOME'
-                    ? 'transaction-icon income'
-                    : 'transaction-icon expense'
+                    ? 'text-success'
+                    : 'text-danger'
                 }
               >
 
                 {transaction.type === 'INCOME'
-                  ? '↗'
-                  : '↘'}
+                  ? '+'
+                  : '-'}
 
-              </div>
+                {formatAmount(
+                  transaction.amount
+                )}
+              </strong>
 
-              <div>
+            </li>
 
-                <h3>
-                  {transaction.description}
-                </h3>
+          )
+        )}
 
-                <div className="transaction-meta">
-
-                  <span>
-                    {transaction.categoryName}
-                  </span>
-
-                  <span>
-                    {transaction.date}
-                  </span>
-
-                </div>
-
-              </div>
-
-            </div>
-
-            <strong
-              className={
-                transaction.type === 'INCOME'
-                  ? 'amount income'
-                  : 'amount expense'
-              }
-            >
-
-              {transaction.type === 'INCOME'
-                ? '+'
-                : '-'}
-
-              {formatAmount(
-                transaction.amount
-              )}
-
-            </strong>
-
-          </div>
-
-        )
-      )}
-
-    </div>
-  );
-}
+      </ul>
+    );
+  }

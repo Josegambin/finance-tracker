@@ -17,17 +17,17 @@ export default function TransactionList({
 
     return (
 
-      <div className="empty-state">
+      <div className="text-center py-4">
 
-        <span className="empty-state-icon">
+        <span className="fs-1 d-block">
           💸
         </span>
 
-        <h3>
+        <h3 className="h5 mt-2">
           {t('transactions.noTransactions')}
         </h3>
 
-        <p>
+        <p className="text-muted mb-0">
           {t('transactions.noTransactionsDescription')}
         </p>
 
@@ -38,45 +38,44 @@ export default function TransactionList({
 
   return (
 
-    <div className="transaction-list">
+    <ul className="list-group list-group-flush">
 
       {transactions.map(
         transaction => (
 
-          <div
-            className="transaction-card"
+          <li
+            className="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent"
             key={transaction.id}
           >
 
-            <div className="transaction-info">
+            <div className="d-flex align-items-center gap-3">
 
-              <div
+              <span
                 className={
                   transaction.type === 'INCOME'
-                    ? 'transaction-icon income'
-                    : 'transaction-icon expense'
+                    ? 'text-success fs-4'
+                    : 'text-danger fs-4'
                 }
               >
-
                 {transaction.type === 'INCOME'
                   ? '↗'
                   : '↘'}
 
-              </div>
+              </span>
 
-              <div className="transaction-details">
+              <div>
 
-                <h3>
+                <h3 className="h6 mb-0">
                   {transaction.description}
                 </h3>
 
-                <div className="transaction-meta">
+                <div className="text-muted small">
 
-                  <span className="transaction-category">
+                  <span className="me-2">
                     {transaction.categoryName}
                   </span>
 
-                  <span className="transaction-date">
+                  <span>
                     {new Date(
                       transaction.date
                     ).toLocaleDateString(
@@ -95,13 +94,13 @@ export default function TransactionList({
 
             </div>
 
-            <div className="transaction-actions">
+            <div className="d-flex align-items-center gap-2">
 
               <strong
                 className={
                   transaction.type === 'INCOME'
-                    ? 'amount income'
-                    : 'amount expense'
+                    ? 'text-success'
+                    : 'text-danger'
                 }
               >
 
@@ -115,7 +114,7 @@ export default function TransactionList({
 
               <button
                 type="button"
-                className="delete-button"
+                className="btn btn-outline-danger btn-sm"
                 onClick={() =>
                   onDelete(transaction.id)
                 }
@@ -127,12 +126,12 @@ export default function TransactionList({
 
             </div>
 
-          </div>
+          </li>
 
         )
       )}
 
-    </div>
+    </ul>
 
   );
 

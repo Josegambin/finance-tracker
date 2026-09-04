@@ -36,20 +36,28 @@ export default function CategoryForm({
   };
 
   return (
-    <form className="category-form" onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder={t('categories.namePlaceholder')}
-        value={name}
-        onChange={(event) => setName(event.target.value)}
-      />
-      <select value={type} onChange={(event) => setType(event.target.value as CategoryType)}>
-        <option value="EXPENSE">{t('transactions.expense')}</option>
-        <option value="INCOME">{t('transactions.income')}</option>
-      </select>
-      <button className="button button-primary" type="submit" disabled={loading}>
-        {loading ? t('common.loading') : t('categories.addCategory')}
-      </button>
+    <form className="row g-3 mt-1" onSubmit={handleSubmit}>
+      <div className="col-md-5">
+        <input
+          type="text"
+          className="form-control"
+          placeholder={t('categories.namePlaceholder')}
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          required
+        />
+      </div>
+      <div className="col-md-3">
+        <select className="form-select" value={type} onChange={(event) => setType(event.target.value as CategoryType)}>
+          <option value="EXPENSE">{t('transactions.expense')}</option>
+          <option value="INCOME">{t('transactions.income')}</option>
+        </select>
+      </div>
+      <div className="col-md-4">
+        <button className="btn btn-primary w-100" type="submit" disabled={loading}>
+          {loading ? t('common.loading') : t('categories.addCategory')}
+        </button>
+      </div>
     </form>
   );
 }

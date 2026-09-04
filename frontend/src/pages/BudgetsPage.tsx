@@ -70,7 +70,7 @@ export default function BudgetsPage() {
     return (
       <>
         <Navbar />
-        <main className="page-container">
+        <main className="container py-4">
           <p>{t('common.loading')}</p>
         </main>
       </>
@@ -80,74 +80,86 @@ export default function BudgetsPage() {
   return (
     <>
       <Navbar />
-      <main className="page-container">
-        <div className="page-header">
-          <p className="eyebrow">{t('budgets.budgetManagement')}</p>
-          <h1>{t('budgets.title')}</h1>
-          <p className="page-description">{t('budgets.description')}</p>
+      <main className="container py-4">
+        <div className="mb-4">
+          <p className="text-muted small text-uppercase mb-0">{t('budgets.budgetManagement')}</p>
+          <h1 className="h2 mb-1">{t('budgets.title')}</h1>
+          <p className="text-muted mb-0">{t('budgets.description')}</p>
         </div>
 
-        {error && <div className="error-message">{error}</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
 
-        <section className="content-card">
-          <h2>{t('budgets.createBudget')}</h2>
+        <section className="card mb-4 p-3">
+          <h2 className="h5">{t('budgets.createBudget')}</h2>
           <BudgetForm categories={categories} onCreate={handleCreate} />
         </section>
 
-        <section className="content-card">
-          <div className="section-header">
+        <section className="card p-3">
+          <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
             <div>
-              <h2>{t('budgets.yourBudgets')}</h2>
-              <p>{t('budgets.trackSpending')}</p>
+              <h2 className="h5 mb-0">{t('budgets.yourBudgets')}</h2>
+              <p className="text-muted small mb-0">{t('budgets.trackSpending')}</p>
             </div>
-            <span>{t('budgets.count', { count: filteredBudgets.length })}</span>
+            <span className="badge text-bg-secondary">{t('budgets.count', { count: filteredBudgets.length })}</span>
           </div>
-          <div className="budget-filter">
-            <label>{t('transactions.month')}</label>
-            <select value={selectedMonth} onChange={event => setSelectedMonth(event.target.value)}>
+          <div className="d-flex align-items-center gap-2 mb-3">
+            <label className="form-label mb-0 fw-semibold">{t('transactions.month')}</label>
+            <select className="form-select w-auto" value={selectedMonth} onChange={event => setSelectedMonth(event.target.value)}>
               {availableMonths.map(month => (
                 <option key={month} value={month}>{month}</option>
               ))}
             </select>
           </div>
 
-          <div className="budget-summary">
-            <div className="summary-card">
-              <span>{t('budgets.totalBudget')}</span>
-              <strong>{formatCurrency(totalBudget)}</strong>
+          <div className="row g-3 mb-4">
+            <div className="col-md-4">
+              <div className="card">
+                <div className="card-body text-center">
+                  <span className="d-block text-muted small mb-1">{t('budgets.totalBudget')}</span>
+                  <strong className="fs-4">{formatCurrency(totalBudget)}</strong>
+                </div>
+              </div>
             </div>
-            <div className="summary-card">
-              <span>{t('budgets.totalSpent')}</span>
-              <strong>{formatCurrency(totalSpent)}</strong>
+            <div className="col-md-4">
+              <div className="card">
+                <div className="card-body text-center">
+                  <span className="d-block text-muted small mb-1">{t('budgets.totalSpent')}</span>
+                  <strong className="fs-4">{formatCurrency(totalSpent)}</strong>
+                </div>
+              </div>
             </div>
-            <div className="summary-card">
-              <span>{t('budgets.remaining')}</span>
-              <strong className={totalRemaining < 0 ? 'negative' : ''}>
-                {formatCurrency(totalRemaining)}
-              </strong>
+            <div className="col-md-4">
+              <div className="card">
+                <div className={`card-body text-center ${totalRemaining < 0 ? 'text-danger' : ''}`}>
+                  <span className="d-block text-muted small mb-1">{t('budgets.remaining')}</span>
+                  <strong className={`fs-4 ${totalRemaining < 0 ? 'text-danger' : ''}`}>
+                    {formatCurrency(totalRemaining)}
+                  </strong>
+                </div>
+              </div>
             </div>
           </div>
 
           {budgets.length === 0 ? (
-            <div className="empty-state">
-              <span>💰</span>
-              <h3>{t('budgets.noBudgets')}</h3>
-              <p>{t('budgets.noBudgetsDescription')}</p>
+            <div className="text-center py-4">
+              <span className="fs-1 d-block">💰</span>
+              <h3 className="h5 mt-2">{t('budgets.noBudgets')}</h3>
+              <p className="text-muted mb-0">{t('budgets.noBudgetsDescription')}</p>
             </div>
           ) : (
-            <div className="budgets-list">
+            <div className="row g-3">
               {filteredBudgets.length === 0 ? (
-                <div className="empty-state">
-                  <span>📊</span>
-                  <h3>{t('budgets.noBudgetsForMonth')}</h3>
-                  <p>{t('budgets.noBudgetsForMonthDescription')}</p>
+                <div className="col-12 text-center py-4">
+                  <span className="fs-1 d-block">📊</span>
+                  <h3 className="h5 mt-2">{t('budgets.noBudgetsForMonth')}</h3>
+                  <p className="text-muted mb-0">{t('budgets.noBudgetsForMonthDescription')}</p>
                 </div>
               ) : (
-                <div className="budgets-list">
-                  {filteredBudgets.map(budget => (
-                    <BudgetCard key={budget.id} budget={budget} onDelete={handleDelete} />
-                  ))}
-                </div>
+                filteredBudgets.map(budget => (
+                  <div className="col-md-6" key={budget.id}>
+                    <BudgetCard budget={budget} onDelete={handleDelete} />
+                  </div>
+                ))
               )}
             </div>
           )}

@@ -17,65 +17,71 @@ export default function Navbar() {
 
   // Only adds the class 'active' when the link is active.
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    isActive ? 'active' : '';
+    isActive ? 'nav-link active' : 'nav-link';
 
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <nav className="navbar">
+    <nav className="navbar navbar-expand-lg bg-body-tertiary border-bottom shadow-sm px-3">
 
-      <div className="navbar-container">
-
-        <NavLink
-          to="/dashboard"
-          className="navbar-brand"
+      <NavLink
+        to="/dashboard"
+        className="navbar-brand d-flex align-items-center gap-2 fw-bold"
+      >
+        <span
+          className="brand-logo d-inline-flex align-items-center justify-content-center rounded-2"
+          style={{ width: 34, height: 34, fontSize: '1.05rem', fontWeight: 800 }}
         >
-          <span className="brand-icon">
-            €
-          </span>
+          €
+        </span>
+        Finance Tracker
+      </NavLink>
 
-          <span>
-            Finance Tracker
-          </span>
-        </NavLink>
+      <button
+        className="navbar-toggler"
+        type="button"
+        onClick={() => setMenuOpen(!menuOpen)}
+        aria-label="Toggle navigation menu"
+        aria-expanded={menuOpen}
+      >
+        <span className="navbar-toggler-icon"></span>
+      </button>
 
-        <button
-          className={`navbar-burger ${menuOpen ? 'open' : ''}`}
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle navigation menu"
-          aria-expanded={menuOpen}
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+      <div className={`collapse navbar-collapse ${menuOpen ? 'show' : ''}`}>
 
-        <div className={`navbar-links ${menuOpen ? 'open' : ''}`}>
+        <ul className="navbar-nav me-auto mb-2 mb-lg-0">
 
+          <li className="nav-item">
+            <NavLink to="/dashboard" className={linkClass} onClick={closeMenu}>
+              {t('nav.dashboard')}
+            </NavLink>
+          </li>
 
-          <NavLink to="/dashboard" className={linkClass} onClick={closeMenu}>
-            {t('nav.dashboard')}
-          </NavLink>
+          <li className="nav-item">
+            <NavLink to="/transactions" className={linkClass} onClick={closeMenu}>
+              {t('nav.transactions')}
+            </NavLink>
+          </li>
 
-          <NavLink to="/transactions" className={linkClass} onClick={closeMenu}>
-            {t('nav.transactions')}
-          </NavLink>
+          <li className="nav-item">
+            <NavLink to="/categories" className={linkClass} onClick={closeMenu}>
+              {t('nav.categories')}
+            </NavLink>
+          </li>
 
-          <NavLink to="/categories" className={linkClass} onClick={closeMenu}>
-            {t('nav.categories')}
-          </NavLink>
+          <li className="nav-item">
+            <NavLink to="/budgets" className={linkClass} onClick={closeMenu}>
+              {t('nav.budgets')}
+            </NavLink>
+          </li>
 
-          <NavLink to="/budgets" className={linkClass} onClick={closeMenu}>
-            {t('nav.budgets')}
-          </NavLink>
+        </ul>
 
-        </div>
-
-        <div className="navbar-actions">
+        <div className="d-flex align-items-center gap-2">
 
           {/* 🌍 SELECTOR DE IDIOMA */}
           <button
-            className="theme-toggle"
+            className="btn btn-outline-secondary"
             onClick={() => changeLanguage(currentLang === 'es' ? 'en' : 'es')}
             aria-label="Change language"
             title="Change language / Cambiar idioma"
@@ -85,7 +91,7 @@ export default function Navbar() {
 
           {/* 🌙 SELECTOR DE TEMA */}
           <button
-            className="theme-toggle"
+            className="btn btn-outline-secondary"
             onClick={toggleTheme}
             aria-label="Toggle theme"
           >
@@ -93,7 +99,7 @@ export default function Navbar() {
           </button>
 
           <button
-            className="navbar-logout"
+            className="btn btn-outline-danger"
             onClick={() => {
               localStorage.removeItem('finance_tracker_token');
               window.location.href = '/login';

@@ -45,34 +45,30 @@ export default function CategoriesPage() {
   };
 
   if (loading) {
-    return <p>{t('common.loading')}</p>;
+    return <p className="container py-4">{t('common.loading')}</p>;
   }
 
   return (
     <>
       <Navbar />
-      <main className="page-container">
-        <div className="page-header">
-          <div>
-            <p className="eyebrow">{t('transactions.financeManagement')}</p>
-            <h1>{t('categories.title')}</h1>
-            <p className="page-description">{t('categories.description')}</p>
-          </div>
+      <main className="container py-4">
+        <div className="mb-4">
+          <p className="text-muted small text-uppercase mb-0">{t('transactions.financeManagement')}</p>
+          <h1 className="h2 mb-1">{t('categories.title')}</h1>
+          <p className="text-muted mb-0">{t('categories.description')}</p>
         </div>
 
-        {error && <div className="error-message">{error}</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
 
-        <section className="content-card">
-          <h2>{t('categories.addCategory')}</h2>
+        <section className="card mb-4 p-3">
+          <h2 className="h5">{t('categories.addCategory')}</h2>
           <CategoryForm onCreate={handleCreate} />
         </section>
 
-        <section className="content-card">
-          <div className="section-header">
-            <div>
-              <h2>{t('categories.yourCategories')}</h2>
-              <p>{t('categories.count', { count: categories.length })}</p>
-            </div>
+        <section className="card p-3">
+          <div className="mb-3">
+            <h2 className="h5 mb-0">{t('categories.yourCategories')}</h2>
+            <p className="text-muted small mb-0">{t('categories.count', { count: categories.length })}</p>
           </div>
           <CategoryList categories={categories} onDelete={handleDelete} />
         </section>

@@ -45,10 +45,10 @@ export default function BudgetForm({
   };
 
   return (
-    <form className="budget-form" onSubmit={handleSubmit}>
-      <div className="form-group">
-        <label>{t('transactions.category')}</label>
-        <select value={categoryId} onChange={event => setCategoryId(event.target.value)}>
+    <form className="row g-3 mt-1" onSubmit={handleSubmit}>
+      <div className="col-md-4">
+        <label className="form-label">{t('transactions.category')}</label>
+        <select className="form-select" value={categoryId} onChange={event => setCategoryId(event.target.value)}>
           <option value="">{t('budgets.selectCategory')}</option>
           {expenseCategories.map(category => (
             <option key={category.id} value={category.id}>
@@ -58,30 +58,34 @@ export default function BudgetForm({
         </select>
       </div>
 
-      <div className="form-group">
-        <label>{t('transactions.month')}</label>
+      <div className="col-md-4">
+        <label className="form-label">{t('transactions.month')}</label>
         <input
           type="month"
+          className="form-control"
           value={month}
           onChange={event => setMonth(event.target.value)}
         />
       </div>
 
-      <div className="form-group">
-        <label>{t('transactions.amount')}</label>
+      <div className="col-md-2">
+        <label className="form-label">{t('transactions.amount')}</label>
         <input
           type="number"
           min="0.01"
           step="0.01"
+          className="form-control"
           placeholder="400.00"
           value={amount}
           onChange={event => setAmount(event.target.value)}
         />
       </div>
 
-      <button type="submit" className="primary-button" disabled={loading}>
-        {loading ? t('common.loading') : t('budgets.createBudget')}
-      </button>
+      <div className="col-md-2 d-flex align-items-end">
+        <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+          {loading ? t('common.loading') : t('budgets.createBudget')}
+        </button>
+      </div>
     </form>
   );
 }

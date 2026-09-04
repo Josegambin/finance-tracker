@@ -13,26 +13,21 @@ export default function DashboardCard({
 }: DashboardCardProps) {
 
   return (
-    <div
-      className={`dashboard-card ${type}`}
-    >
+    <div className="card card-hover stat-card h-100 border-0">
+      <div className={`card-body d-flex flex-column gap-3`}>
+        <div className="d-flex align-items-center justify-content-between">
+          <span className={`stat-icon ${type}`}>
+            {icon}
+          </span>
+          <span className="text-secondary fw-semibold small text-uppercase">
+            {title}
+          </span>
+        </div>
 
-      <div className="dashboard-card-header">
-
-        <span className="dashboard-card-icon">
-          {icon}
-        </span>
-
-        <span className="dashboard-card-title">
-          {title}
-        </span>
-
+        <strong className="stat-value">
+          {value}
+        </strong>
       </div>
-
-      <strong className="dashboard-card-value">
-        {value}
-      </strong>
-
     </div>
   );
 }
