@@ -1,7 +1,6 @@
 services:
-
   postgres:
-    image: postgres:18
+    image: postgres:17  # Cambiado de 18 a 17
     container_name: finance-tracker-db
     environment:
       POSTGRES_DB: finance_tracker
@@ -10,12 +9,14 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql
+      - postgres_data:/var/lib/postgresql/data  # Añadido /data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U finance_user -d finance_tracker"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - finance-network
 
   backend:
     build:
@@ -23,9 +24,13 @@ services:
       dockerfile: Dockerfile
     container_name: finance-tracker-backend
     environment:
-      DB_URL: jdbc:postgresql://postgres:5432/finance_tracker
-      DB_USERNAME: finance_user
-      DB_PASSWORD: finance_password
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/finance_tracker
+      SPRING_DATASOURCE_USERNAME: finance_user
+      SPRING_DATASOURCE_PASSWORD: finance_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
       JWT_SECRET: ${JWT_SECRET:-change-this-secret-key-to-a-long-random-value-123456789}
       JWT_EXPIRATION: 3600000
       JWT_REFRESH_EXPIRATION: 604800000
@@ -37,6 +42,7 @@ services:
         condition: service_healthy
     networks:
       - finance-network
+    restart: on-failure  # Añadido para reiniciar si falla
 
   frontend:
     build:

@@ -62,3 +62,7 @@ rate-limiting:
     capacity: 5
     refill-tokens: 5
     refill-duration: 60 # 1 minute
+
+# Añade al final del archivo
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost,http://localhost:80,http://127.0.0.1}
