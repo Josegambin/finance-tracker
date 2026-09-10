@@ -111,6 +111,42 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Maps a {@link ForbiddenException} to HTTP 403.
+     *
+     * @param exception the caught exception
+     * @return the error response
+     */
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleForbidden(
+            ForbiddenException exception
+    ) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.FORBIDDEN.value(),
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    /**
+     * Maps a {@link ConflictException} to HTTP 409.
+     *
+     * @param exception the caught exception
+     * @return the error response
+     */
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflict(
+            ConflictException exception
+    ) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    /**
      * Maps bean-validation failures to HTTP 400 with per-field errors.
      *
      * @param exception the caught exception

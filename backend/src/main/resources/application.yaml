@@ -65,4 +65,4 @@ rate-limiting:
 
 # Añade al final del archivo
 cors:
-  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost,http://localhost:80,http://127.0.0.1}
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost,http://localhost:80,http://127.0.0.1,http://localhost:5173,http://localhost:8080}

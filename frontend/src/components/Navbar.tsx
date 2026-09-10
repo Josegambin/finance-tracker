@@ -1,12 +1,15 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
 
   const { theme, toggleTheme } = useTheme();
   const { t, i18n } = useTranslation();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const changeLanguage = (lng: string) => {
@@ -99,8 +102,8 @@ export default function Navbar() {
           <button
             className="btn btn-outline-danger"
             onClick={() => {
-              localStorage.removeItem('finance_tracker_token');
-              window.location.href = '/login';
+              logout();
+              navigate('/login', { replace: true });
             }}
           >
             {t('nav.logout')}

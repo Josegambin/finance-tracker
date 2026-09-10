@@ -7,6 +7,7 @@ import finance_tracker_api.entity.Category;
 import finance_tracker_api.entity.Transaction;
 import finance_tracker_api.entity.TransactionType;
 import finance_tracker_api.entity.User;
+import finance_tracker_api.exception.ForbiddenException;
 import finance_tracker_api.exception.InvalidRequestException;
 import finance_tracker_api.exception.ResourceNotFoundException;
 import finance_tracker_api.repository.CategoryRepository;
@@ -179,7 +180,7 @@ public class TransactionService {
                                 .getId()
                                 .equals(user.getId())) {
 
-                        throw new IllegalArgumentException(
+                        throw new ForbiddenException(
                                         "You cannot use this category");
                 }
 
@@ -192,7 +193,7 @@ public class TransactionService {
                                 .name()
                                 .equals(request.type().name())) {
 
-                        throw new IllegalArgumentException(
+                        throw new InvalidRequestException(
                                         "Transaction type does not match category type");
                 }
 
@@ -245,7 +246,7 @@ public class TransactionService {
                                 .getId()
                                 .equals(user.getId())) {
 
-                        throw new RuntimeException(
+                        throw new ForbiddenException(
                                         "You cannot delete this transaction");
                 }
 

@@ -37,8 +37,10 @@ export const errorHandler = {
     const { status, message, errors } = error;
 
     if (status === 401) {
+      localStorage.removeItem('finance_tracker_token');
+      localStorage.removeItem('finance_tracker_refresh_token');
       toastService.error('Sesión expirada. Por favor, inicia sesión nuevamente.');
-      // Here you could redirect to the login page
+      window.location.assign('/login');
       throw error;
     }
 

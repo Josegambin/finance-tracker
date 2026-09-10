@@ -4,6 +4,7 @@ import finance_tracker_api.dto.CategoryResponse;
 import finance_tracker_api.dto.CreateCategoryRequest;
 import finance_tracker_api.entity.Category;
 import finance_tracker_api.entity.User;
+import finance_tracker_api.exception.ForbiddenException;
 import finance_tracker_api.exception.ResourceNotFoundException;
 import finance_tracker_api.repository.CategoryRepository;
 import org.springframework.data.domain.Page;
@@ -126,7 +127,7 @@ public class CategoryService {
                 .getId()
                 .equals(user.getId())) {
 
-            throw new IllegalArgumentException(
+            throw new ForbiddenException(
                     "You cannot delete this category"
             );
         }

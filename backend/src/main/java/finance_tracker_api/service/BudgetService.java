@@ -6,6 +6,9 @@ import finance_tracker_api.entity.Budget;
 import finance_tracker_api.entity.Category;
 import finance_tracker_api.entity.CategoryType;
 import finance_tracker_api.entity.User;
+import finance_tracker_api.exception.InvalidRequestException;
+import finance_tracker_api.exception.ConflictException;
+import finance_tracker_api.exception.ForbiddenException;
 import finance_tracker_api.exception.ResourceNotFoundException;
 import finance_tracker_api.repository.BudgetRepository;
 import finance_tracker_api.repository.CategoryRepository;
@@ -91,7 +94,7 @@ public class BudgetService {
                                 .getId()
                                 .equals(user.getId())) {
 
-                        throw new IllegalArgumentException(
+                        throw new ForbiddenException(
                                         "You cannot use this category");
                 }
 
@@ -102,7 +105,7 @@ public class BudgetService {
 
                 if (category.getType() != CategoryType.EXPENSE) {
 
-                        throw new IllegalArgumentException(
+                        throw new InvalidRequestException(
                                         "Budgets can only be created for expense categories");
                 }
 
@@ -122,7 +125,7 @@ public class BudgetService {
 
                 if (budgetExists) {
 
-                        throw new IllegalArgumentException(
+                        throw new ConflictException(
                                         "A budget already exists for this category and month");
                 }
 
@@ -200,7 +203,7 @@ public class BudgetService {
                                 .getId()
                                 .equals(user.getId())) {
 
-                        throw new RuntimeException(
+                        throw new ForbiddenException(
                                         "You cannot delete this budget");
                 }
 
