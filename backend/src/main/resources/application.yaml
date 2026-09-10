@@ -1,4 +1,4 @@
-spring:
+﻿spring:
   application:
     name: finance-tracker-api
 
@@ -20,17 +20,17 @@ spring:
     enabled: false
     locations: classpath:db/migration
     baseline-on-migrate: true
-# Logging Configuration
+
 logging:
   level:
     root: INFO
     finance_tracker_api: DEBUG
     org.springframework.security: WARN
     org.hibernate.SQL: WARN
+
 server:
   port: ${SERVER_PORT:8080}
 
-# Actuator Configuration
 management:
   endpoints:
     web:
@@ -40,7 +40,6 @@ management:
     health:
       show-details: when-authorized
 
-# OpenAPI/Swagger Configuration
 springdoc:
   api-docs:
     path: /api-docs
@@ -48,21 +47,19 @@ springdoc:
     path: /swagger-ui.html
     enabled: true
 
-# Security Configuration
 security:
   jwt:
-    secret: ${JWT_SECRET:change-this-secret-key-to-a-long-random-value-123456789}
-    expiration: ${JWT_EXPIRATION:3600000} # 1 hora
-    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000} # 7 días
+    secret: ${JWT_SECRET:finance-tracker-local-development-secret-2026}
+    expiration: ${JWT_EXPIRATION:3600000}
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
 
-# Rate Limiting Configuration
 rate-limiting:
   enabled: true
   auth-endpoint:
     capacity: 5
     refill-tokens: 5
-    refill-duration: 60 # 1 minute
+    refill-duration: 60
 
-# Añade al final del archivo
 cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost,http://localhost:80,http://127.0.0.1,http://localhost:5173,http://localhost:8080}
+
