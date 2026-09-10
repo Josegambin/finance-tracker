@@ -8,6 +8,8 @@ import finance_tracker_api.entity.CategoryType;
 import finance_tracker_api.entity.Transaction;
 import finance_tracker_api.entity.TransactionType;
 import finance_tracker_api.entity.User;
+import finance_tracker_api.exception.ForbiddenException;
+import finance_tracker_api.exception.InvalidRequestException;
 import finance_tracker_api.exception.ResourceNotFoundException;
 import finance_tracker_api.repository.CategoryRepository;
 import finance_tracker_api.repository.TransactionRepository;
@@ -159,7 +161,7 @@ class TransactionServiceTest {
 
     /**
      * Verifies that creating a transaction with a category owned by
-     * another user throws {@code IllegalArgumentException}.
+     * another user throws {@link ForbiddenException}.
      */
     @Test
     void create_shouldThrow_whenCategoryBelongsToAnotherUser() {
@@ -177,13 +179,13 @@ class TransactionServiceTest {
                 TransactionType.INCOME,
                 10L);
 
-        assertThrows(IllegalArgumentException.class, () -> transactionService.create(request));
+        assertThrows(ForbiddenException.class, () -> transactionService.create(request));
         verify(transactionRepository, never()).save(any(Transaction.class));
     }
 
     /**
      * Verifies that creating a transaction whose type does not match the
-     * category type throws {@code IllegalArgumentException}.
+     * category type throws {@link InvalidRequestException}.
      */
     @Test
     void create_shouldThrow_whenCategoryTypeDoesNotMatchTransactionType() {
@@ -199,7 +201,7 @@ class TransactionServiceTest {
                 TransactionType.INCOME,
                 10L);
 
-        assertThrows(IllegalArgumentException.class, () -> transactionService.create(request));
+        assertThrows(InvalidRequestException.class, () -> transactionService.create(request));
         verify(transactionRepository, never()).save(any(Transaction.class));
     }
 

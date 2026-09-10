@@ -1,4 +1,4 @@
-﻿package finance_tracker_api.config;
+package finance_tracker_api.config;
 
 import java.util.Arrays;
 import java.util.List;

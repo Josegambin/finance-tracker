@@ -6,6 +6,9 @@ import finance_tracker_api.entity.Budget;
 import finance_tracker_api.entity.Category;
 import finance_tracker_api.entity.CategoryType;
 import finance_tracker_api.entity.User;
+import finance_tracker_api.exception.ConflictException;
+import finance_tracker_api.exception.ForbiddenException;
+import finance_tracker_api.exception.InvalidRequestException;
 import finance_tracker_api.exception.ResourceNotFoundException;
 import finance_tracker_api.repository.BudgetRepository;
 import finance_tracker_api.repository.CategoryRepository;
@@ -130,7 +133,7 @@ class BudgetServiceTest {
         when(currentUserService.getCurrentUser()).thenReturn(user);
         when(categoryRepository.findById(2L)).thenReturn(Optional.of(incomeCategory));
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidRequestException.class,
                 () -> budgetService.createBudget(new CreateBudgetRequest(2L, month, new BigDecimal("500"))));
         verify(budgetRepository, never()).save(any());
     }
@@ -147,7 +150,7 @@ class BudgetServiceTest {
         when(currentUserService.getCurrentUser()).thenReturn(user);
         when(categoryRepository.findById(2L)).thenReturn(Optional.of(expenseCategory));
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ForbiddenException.class,
                 () -> budgetService.createBudget(new CreateBudgetRequest(2L, month, new BigDecimal("500"))));
     }
 
@@ -161,7 +164,7 @@ class BudgetServiceTest {
         when(budgetRepository.findByUserIdAndCategoryIdAndMonth(anyLong(), anyLong(), any()))
                 .thenReturn(Optional.of(new Budget(user, expenseCategory, month, new BigDecimal("100"))));
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ConflictException.class,
                 () -> budgetService.createBudget(new CreateBudgetRequest(2L, month, new BigDecimal("500"))));
         verify(budgetRepository, never()).save(any());
     }
