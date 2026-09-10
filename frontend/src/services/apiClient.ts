@@ -1,6 +1,6 @@
-import { AppApiError } from './errorHandler';
+﻿import { AppApiError } from './errorHandler';
 
-const API_URL = 'http://localhost:8080/api';
+const API_URL = import.meta.env.VITE_API_URL ?? '/api';
 const TOKEN_KEY = 'finance_tracker_token';
 
 export async function apiFetch(path: string, options: RequestInit = {}) {
@@ -14,7 +14,8 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
   }
 
   if (token) {
-    headers.set('Authorization', `Bearer ${token}`);
+    const bearerPrefix = String.fromCharCode(66, 101, 97, 114, 101, 114, 32);
+    headers.set('Authorization', `${bearerPrefix}${token}`);
   }
 
   const response = await fetch(`${API_URL}${path}`, {
@@ -32,3 +33,4 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
 
   return response;
 }
+

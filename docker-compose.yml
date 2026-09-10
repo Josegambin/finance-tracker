@@ -1,6 +1,6 @@
-services:
+﻿services:
   postgres:
-    image: postgres:17  # Cambiado de 18 a 17
+    image: postgres:17
     container_name: finance-tracker-db
     environment:
       POSTGRES_DB: finance_tracker
@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data  # Añadido /data
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U finance_user -d finance_tracker"]
       interval: 10s
@@ -31,7 +31,8 @@ services:
       SPRING_JPA_SHOW_SQL: "true"
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
-      JWT_SECRET: ${JWT_SECRET:-change-this-secret-key-to-a-long-random-value-123456789}
+      JWT_SECRET: ${JWT_SECRET:-finance-tracker-local-development-secret-2026}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:80,http://localhost:5173,http://127.0.0.1}
       JWT_EXPIRATION: 3600000
       JWT_REFRESH_EXPIRATION: 604800000
       SERVER_PORT: 8080
@@ -42,7 +43,7 @@ services:
         condition: service_healthy
     networks:
       - finance-network
-    restart: on-failure  # Añadido para reiniciar si falla
+    restart: on-failure
 
   frontend:
     build:
@@ -62,3 +63,4 @@ volumes:
 networks:
   finance-network:
     driver: bridge
+
