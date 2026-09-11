@@ -10,20 +10,15 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    return savedTheme || 'light';
-  });
+  const [theme, setTheme] = useState<Theme>('dark');
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    // Bootstrap 5.3+ theme switching (dark/light)
     document.documentElement.setAttribute('data-bs-theme', theme);
-    localStorage.setItem('theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
 
   return (

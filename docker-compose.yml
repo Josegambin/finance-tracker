@@ -24,13 +24,9 @@
       dockerfile: Dockerfile
     container_name: finance-tracker-backend
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/finance_tracker
-      SPRING_DATASOURCE_USERNAME: finance_user
-      SPRING_DATASOURCE_PASSWORD: finance_password
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_JPA_SHOW_SQL: "true"
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
-      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      DB_URL: jdbc:postgresql://postgres:5432/finance_tracker
+      DB_USERNAME: finance_user
+      DB_PASSWORD: finance_password
       JWT_SECRET: ${JWT_SECRET:-finance-tracker-local-development-secret-2026}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:80,http://localhost:5173,http://127.0.0.1}
       JWT_EXPIRATION: 3600000

@@ -3,7 +3,7 @@
    Palette: indigo / emerald / slate + Inter
    ============================================================ */
 
-/* ---------- Light mode (default) ---------- */
+/* ---------- Light mode ---------- */
 :root,
 [data-bs-theme="light"] {
   /* Bootstrap overrides */
